@@ -1,0 +1,253 @@
+    {% if analizado %}
+    {% include "salida.html" %}
+    <section id="proceso-interno">
+        <h2>C. Proceso interno</h2>
+    <section id="analisis-lexico">
+        <h3>C.1 Análisis léxico</h3>
+        <p>Las cinco familias son seleccionables para estudiar sus autómatas. Los literales también son tokens del analizador.</p>
+        <div class="tabla-contenedor"><table><thead><tr><th>Token</th><th>Descripción</th><th>Expresión regular</th><th>Ejemplos léxicos válidos / inválidos</th></tr></thead><tbody>
+        {% for nombre, expresion in expresiones.items() %}<tr><td>{{ nombre }}</td><td>{{ descripciones[nombre] }}</td><td><code>{{ expresion }}</code></td><td>{{ ejemplos[nombre][0]|join(' / ') }}<br>{{ 'No como IGUAL:' if nombre == 'IGUAL' else 'No:' }} {{ ejemplos[nombre][1]|join(' / ') }}</td></tr>{% endfor %}
+        </tbody></table></div>
+        <p class="nota">Literales: {% for lexema, nombre in literales.items() %}<code>{{ lexema }}</code> ({{ nombre }}){{ "; " if not loop.last else "." }}{% endfor %}</p>
+        <h4>Lexemas de la entrada</h4>
+
+        {% if tokens %}
+        <div class="tabla-contenedor">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Línea</th>
+                        <th>Columna</th>
+                        <th>Lexema</th>
+                        <th>Token</th>
+                        <th>Expresión regular</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in tokens[:6] %}
+                    <tr>
+                        <td>{{ t.linea }}</td>
+                        <td>{{ t.columna }}</td>
+                        <td><code>{{ t.lexema }}</code></td>
+                        <td>{{ t.token }}</td>
+                        <td><code>{{ expresiones.get(t.token, t.lexema) }}</code></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <details><summary>Ver todos los lexemas ({{ tokens|length }})</summary>
+        <div class="tabla-contenedor">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Línea</th>
+                        <th>Columna</th>
+                        <th>Lexema</th>
+                        <th>Token</th>
+                        <th>Expresión regular</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for t in tokens %}
+                    <tr>
+                        <td>{{ t.linea }}</td>
+                        <td>{{ t.columna }}</td>
+                        <td><code>{{ t.lexema }}</code></td>
+                        <td>{{ t.token }}</td>
+                        <td><code>{{ expresiones.get(t.token, t.lexema) }}</code></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+</details>
+        {% endif %}
+
+        {% if errores %}
+            <h3 class="error">Errores léxicos</h3>
+
+            {% for e in errores %}
+                <p>
+                    Línea {{ e.linea }},
+                    columna {{ e.columna }}:
+                    <strong>{{ e.lexema }}</strong> {{ e.detalle }}
+                </p>
+            {% endfor %}
+        {% else %}
+            <p class="correcto">
+                Análisis léxico completado sin errores.
+            </p>
+        {% endif %}
+
+        {% if not tokens %}
+            <p>No se reconocieron tokens válidos.</p>
+        {% endif %}
+    {% if resultados %}
+    <div class="automatas-lexicos">
+        <h4>Expresiones regulares y autómatas</h4>
+
+        <p>
+            Selecciona una familia. Un AFND directo puede ser determinista: en ese caso AFND y AFD reconocen con la misma estructura. El mínimo se calcula por particiones.
+        </p>
+
+        <div class="selector">
+            {% for nombre in resultados %}
+                <button
+                    type="button"
+                    class="boton-token"
+                    data-token="{{ nombre }}"
+                    onclick="seleccionarToken('{{ nombre }}')">
+                    {{ nombre }}
+                </button>
+            {% endfor %}
+        </div>
+
+        {% for nombre, datos in resultados.items() %}
+        <div class="panel-token" id="token-{{ nombre }}">
+            <div class="panel">
+                <h3>{{ nombre }}</h3>
+                <p>
+                    <strong>Expresión regular:</strong>
+                    <code>{{ datos.expresion }}</code>
+                </p>
+                <p>
+                    <span class="etiqueta">
+                        AFND: {{ datos.afnd.estados|length }} estados
+                    </span>
+                    <span class="etiqueta">
+                        AFD: {{ datos.afd.estados|length }} estados
+                    </span>
+                    <span class="etiqueta">AFD mínimo parcial: {{ datos.afd_minimo.estados|length }} estados (sin sumidero explícito)</span>
+                </p>
+            </div>
+
+            <p>Cumplen la expresión regular: {{ datos.ejemplos[0]|join(" / ") }}.
+            Inválidos: {{ datos.ejemplos[1]|join(" / ") }}.</p>
+            <div class="comparacion-automatas">
+            {% for tipo in ["afnd", "afd", "afd_minimo"] %}
+                {% set automata = datos[tipo] %}
+                {% set tabla = datos["tabla_visual_" ~ tipo] %}
+                {% set quintupla = datos["quintupla_" ~ tipo] %}
+
+                {% if tipo == "afd_minimo" %}<details class="automata-minimo" ontoggle="if (this.open) reiniciarZoom('grafico-{{ nombre }}-afd_minimo')"><summary>Consultar AFD mínimo parcial (sin sumidero explícito)</summary>{% endif %}
+                <div class="panel panel-automata" data-tipo="{{ tipo }}">
+                    <h3>{{ "AFD mínimo parcial" if tipo == "afd_minimo" else tipo|upper }} — {{ nombre }}</h3>
+                    <p>M = (Q, Σ, δ, q₀, F)</p>{% if tipo != "afnd" %}<p class="nota">AFD parcial: δ: Q × Σ ⇀ Q. Las transiciones no definidas rechazan; se omite el sumidero implícito.</p>{% endif %}
+
+                    <div class="controles">
+                        <button type="button"
+                            onclick="cambiarZoom('grafico-{{ nombre }}-{{ tipo }}', 1.25)">
+                            Acercar +
+                        </button>
+
+                        <button type="button"
+                            onclick="cambiarZoom('grafico-{{ nombre }}-{{ tipo }}', 0.8)">
+                            Alejar −
+                        </button>
+
+                        <button type="button"
+                            onclick="reiniciarZoom('grafico-{{ nombre }}-{{ tipo }}')">
+                            Restablecer
+                        </button>
+                    </div>
+
+                    <div class="grafico" id="grafico-{{ nombre }}-{{ tipo }}" tabindex="0" role="region" aria-label="Gráfico {{ tipo|upper }} de {{ nombre }}; desplazamiento y zoom disponibles">
+                        <div role="img" aria-label="{{ tipo|upper }} del token {{ nombre }}">
+                            {{ datos['imagen_' ~ tipo]|safe }}
+                        </div>
+                    </div>
+
+                    <h3>Quíntupla</h3>
+
+                    <div class="quintupla">
+                        <strong>Q</strong>
+                        <div>{{ quintupla.Q|join(", ") }}</div>
+
+                        <strong>Σ</strong>
+                        <div>{{ quintupla.Sigma|simbolos }}</div>
+
+                        <strong>δ</strong>
+                        <div>
+                            Ver tabla de transiciones.
+                        </div>
+
+                        <strong>q₀</strong>
+                        <div>{{ quintupla.q0 }}</div>
+
+                        <strong>F</strong>
+                        <div>{{ quintupla.F|join(", ") }}</div>
+                    </div>
+
+                    {% if tipo != "afnd" %}
+                    <details><summary>Correspondencia de estados</summary>
+                    <h3>{{ "Estados del AFD agrupados" if tipo == "afd_minimo" else "Estados equivalentes del AFND" }}</h3>
+
+                    <div class="tabla-contenedor">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>{{ "AFD mínimo parcial" if tipo == "afd_minimo" else "AFD" }}</th>
+                                    <th>{{ "Estados AFD originales" if tipo == "afd_minimo" else "Conjunto de estados AFND" }}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for estado, conjunto in automata.equivalencias.items() %}
+                                <tr>
+                                    <td>{{ estado }}</td>
+                                    <td>{{ conjunto|join(", ") if conjunto else "∅ (sumidero)" }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    </details>
+                    {% endif %}
+
+                    <h3>Tabla de transiciones</h3>
+
+                    <div class="tabla-contenedor transiciones">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Estado</th>
+                                    {% for simbolo in tabla.alfabeto %}
+                                        <th>{{ simbolo }}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for fila in tabla.filas %}
+                                <tr>
+                                    <td>
+                                        {% if fila.inicial %}→{% endif %}
+                                        {% if fila.final %}*{% endif %}
+                                        {{ fila.estado }}
+                                    </td>
+
+                                    {% for simbolo in tabla.alfabeto %}
+                                        <td>{{ fila.destinos[simbolo] }}</td>
+                                    {% endfor %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p class="nota">
+                        → Inicial. * Aceptación. ∅ Sin transición. ␠ Espacio.
+                        Los símbolos agrupados comparten destinos. Una transición inexistente rechaza la cadena; se omite el sumidero implícito.
+                    </p>
+                </div>
+                {% if tipo == "afd_minimo" %}</details>{% endif %}
+            {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    </section>
+    {% include "sintaxis.html" %}
+    {% include "semantica.html" %}
+    </section>
+    {% endif %}

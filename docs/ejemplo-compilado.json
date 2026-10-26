@@ -1,0 +1,2281 @@
+{
+  "tokens": [
+    {
+      "linea": 1,
+      "columna": 1,
+      "lexema": "CARGAR",
+      "token": "CARGAR"
+    },
+    {
+      "linea": 1,
+      "columna": 8,
+      "lexema": "S01",
+      "token": "SENSOR"
+    },
+    {
+      "linea": 1,
+      "columna": 12,
+      "lexema": "=",
+      "token": "IGUAL"
+    },
+    {
+      "linea": 1,
+      "columna": 14,
+      "lexema": "28",
+      "token": "NUMERO"
+    },
+    {
+      "linea": 1,
+      "columna": 16,
+      "lexema": ";",
+      "token": "PUNTO_Y_COMA"
+    },
+    {
+      "linea": 2,
+      "columna": 1,
+      "lexema": "CARGAR",
+      "token": "CARGAR"
+    },
+    {
+      "linea": 2,
+      "columna": 8,
+      "lexema": "S02",
+      "token": "SENSOR"
+    },
+    {
+      "linea": 2,
+      "columna": 12,
+      "lexema": "=",
+      "token": "IGUAL"
+    },
+    {
+      "linea": 2,
+      "columna": 14,
+      "lexema": "15",
+      "token": "NUMERO"
+    },
+    {
+      "linea": 2,
+      "columna": 16,
+      "lexema": ";",
+      "token": "PUNTO_Y_COMA"
+    },
+    {
+      "linea": 3,
+      "columna": 1,
+      "lexema": "SI",
+      "token": "SI"
+    },
+    {
+      "linea": 3,
+      "columna": 4,
+      "lexema": "S01",
+      "token": "SENSOR"
+    },
+    {
+      "linea": 3,
+      "columna": 8,
+      "lexema": ">",
+      "token": "COMPARADOR"
+    },
+    {
+      "linea": 3,
+      "columna": 10,
+      "lexema": "26",
+      "token": "NUMERO"
+    },
+    {
+      "linea": 3,
+      "columna": 13,
+      "lexema": "Y",
+      "token": "Y"
+    },
+    {
+      "linea": 3,
+      "columna": 15,
+      "lexema": "S02",
+      "token": "SENSOR"
+    },
+    {
+      "linea": 3,
+      "columna": 19,
+      "lexema": "<",
+      "token": "COMPARADOR"
+    },
+    {
+      "linea": 3,
+      "columna": 21,
+      "lexema": "20",
+      "token": "NUMERO"
+    },
+    {
+      "linea": 3,
+      "columna": 24,
+      "lexema": "ENTONCES",
+      "token": "ENTONCES"
+    },
+    {
+      "linea": 3,
+      "columna": 33,
+      "lexema": "AVISAR",
+      "token": "AVISAR"
+    },
+    {
+      "linea": 3,
+      "columna": 40,
+      "lexema": "A01",
+      "token": "ACCION"
+    },
+    {
+      "linea": 3,
+      "columna": 43,
+      "lexema": ";",
+      "token": "PUNTO_Y_COMA"
+    }
+  ],
+  "errores": [],
+  "registros": [
+    {
+      "aceptado": true,
+      "arbol": {
+        "simbolo": "P",
+        "hijos": [
+          {
+            "simbolo": "CARGAS",
+            "hijos": [
+              {
+                "simbolo": "CARGA",
+                "hijos": [
+                  {
+                    "simbolo": "CARGAR",
+                    "lexema": "CARGAR",
+                    "hijos": []
+                  },
+                  {
+                    "simbolo": "SENSOR",
+                    "lexema": "S01",
+                    "hijos": []
+                  },
+                  {
+                    "simbolo": "IGUAL",
+                    "lexema": "=",
+                    "hijos": []
+                  },
+                  {
+                    "simbolo": "NUMERO",
+                    "lexema": "28",
+                    "hijos": []
+                  },
+                  {
+                    "simbolo": "PUNTO_Y_COMA",
+                    "lexema": ";",
+                    "hijos": []
+                  }
+                ]
+              },
+              {
+                "simbolo": "CARGAS",
+                "hijos": [
+                  {
+                    "simbolo": "CARGA",
+                    "hijos": [
+                      {
+                        "simbolo": "CARGAR",
+                        "lexema": "CARGAR",
+                        "hijos": []
+                      },
+                      {
+                        "simbolo": "SENSOR",
+                        "lexema": "S02",
+                        "hijos": []
+                      },
+                      {
+                        "simbolo": "IGUAL",
+                        "lexema": "=",
+                        "hijos": []
+                      },
+                      {
+                        "simbolo": "NUMERO",
+                        "lexema": "15",
+                        "hijos": []
+                      },
+                      {
+                        "simbolo": "PUNTO_Y_COMA",
+                        "lexema": ";",
+                        "hijos": []
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "simbolo": "REGLAS",
+            "hijos": [
+              {
+                "simbolo": "REGLA",
+                "hijos": [
+                  {
+                    "simbolo": "SI",
+                    "lexema": "SI",
+                    "hijos": []
+                  },
+                  {
+                    "simbolo": "COND",
+                    "hijos": [
+                      {
+                        "simbolo": "COMP",
+                        "hijos": [
+                          {
+                            "simbolo": "SENSOR",
+                            "lexema": "S01",
+                            "hijos": []
+                          },
+                          {
+                            "simbolo": "COMPARADOR",
+                            "lexema": ">",
+                            "hijos": []
+                          },
+                          {
+                            "simbolo": "NUMERO",
+                            "lexema": "26",
+                            "hijos": []
+                          }
+                        ]
+                      },
+                      {
+                        "simbolo": "RESTO",
+                        "hijos": [
+                          {
+                            "simbolo": "Y",
+                            "lexema": "Y",
+                            "hijos": []
+                          },
+                          {
+                            "simbolo": "COMP",
+                            "hijos": [
+                              {
+                                "simbolo": "SENSOR",
+                                "lexema": "S02",
+                                "hijos": []
+                              },
+                              {
+                                "simbolo": "COMPARADOR",
+                                "lexema": "<",
+                                "hijos": []
+                              },
+                              {
+                                "simbolo": "NUMERO",
+                                "lexema": "20",
+                                "hijos": []
+                              }
+                            ]
+                          },
+                          {
+                            "simbolo": "RESTO",
+                            "hijos": []
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "simbolo": "ENTONCES",
+                    "lexema": "ENTONCES",
+                    "hijos": []
+                  },
+                  {
+                    "simbolo": "AVISAR",
+                    "lexema": "AVISAR",
+                    "hijos": []
+                  },
+                  {
+                    "simbolo": "ACCION",
+                    "lexema": "A01",
+                    "hijos": []
+                  },
+                  {
+                    "simbolo": "PUNTO_Y_COMA",
+                    "lexema": ";",
+                    "hijos": []
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "derivacion": [
+        [
+          "P"
+        ],
+        [
+          "CARGAS",
+          "REGLAS"
+        ],
+        [
+          "CARGA",
+          "CARGAS",
+          "REGLAS"
+        ],
+        [
+          "CARGAR",
+          "SENSOR",
+          "IGUAL",
+          "NUMERO",
+          "PUNTO_Y_COMA",
+          "CARGAS",
+          "REGLAS"
+        ],
+        [
+          "CARGAR",
+          "SENSOR",
+          "IGUAL",
+          "NUMERO",
+          "PUNTO_Y_COMA",
+          "CARGA",
+          "REGLAS"
+        ],
+        [
+          "CARGAR",
+          "SENSOR",
+          "IGUAL",
+          "NUMERO",
+          "PUNTO_Y_COMA",
+          "CARGAR",
+          "SENSOR",
+          "IGUAL",
+          "NUMERO",
+          "PUNTO_Y_COMA",
+          "REGLAS"
+        ],
+        [
+          "CARGAR",
+          "SENSOR",
+          "IGUAL",
+          "NUMERO",
+          "PUNTO_Y_COMA",
+          "CARGAR",
+          "SENSOR",
+          "IGUAL",
+          "NUMERO",
+          "PUNTO_Y_COMA",
+          "REGLA"
+        ],
+        [
+          "CARGAR",
+          "SENSOR",
+          "IGUAL",
+          "NUMERO",
+          "PUNTO_Y_COMA",
+          "CARGAR",
+          "SENSOR",
+          "IGUAL",
+          "NUMERO",
+          "PUNTO_Y_COMA",
+          "SI",
+          "COND",
+          "ENTONCES",
+          "AVISAR",
+          "ACCION",
+          "PUNTO_Y_COMA"
+        ],
+        [
+          "CARGAR",
+          "SENSOR",
+          "IGUAL",
+          "NUMERO",
+          "PUNTO_Y_COMA",
+          "CARGAR",
+          "SENSOR",
+          "IGUAL",
+          "NUMERO",
+          "PUNTO_Y_COMA",
+          "SI",
+          "COMP",
+          "RESTO",
+          "ENTONCES",
+          "AVISAR",
+          "ACCION",
+          "PUNTO_Y_COMA"
+        ],
+        [
+          "CARGAR",
+          "SENSOR",
+          "IGUAL",
+          "NUMERO",
+          "PUNTO_Y_COMA",
+          "CARGAR",
+          "SENSOR",
+          "IGUAL",
+          "NUMERO",
+          "PUNTO_Y_COMA",
+          "SI",
+          "SENSOR",
+          "COMPARADOR",
+          "NUMERO",
+          "RESTO",
+          "ENTONCES",
+          "AVISAR",
+          "ACCION",
+          "PUNTO_Y_COMA"
+        ],
+        [
+          "CARGAR",
+          "SENSOR",
+          "IGUAL",
+          "NUMERO",
+          "PUNTO_Y_COMA",
+          "CARGAR",
+          "SENSOR",
+          "IGUAL",
+          "NUMERO",
+          "PUNTO_Y_COMA",
+          "SI",
+          "SENSOR",
+          "COMPARADOR",
+          "NUMERO",
+          "Y",
+          "COMP",
+          "RESTO",
+          "ENTONCES",
+          "AVISAR",
+          "ACCION",
+          "PUNTO_Y_COMA"
+        ],
+        [
+          "CARGAR",
+          "SENSOR",
+          "IGUAL",
+          "NUMERO",
+          "PUNTO_Y_COMA",
+          "CARGAR",
+          "SENSOR",
+          "IGUAL",
+          "NUMERO",
+          "PUNTO_Y_COMA",
+          "SI",
+          "SENSOR",
+          "COMPARADOR",
+          "NUMERO",
+          "Y",
+          "SENSOR",
+          "COMPARADOR",
+          "NUMERO",
+          "RESTO",
+          "ENTONCES",
+          "AVISAR",
+          "ACCION",
+          "PUNTO_Y_COMA"
+        ],
+        [
+          "CARGAR",
+          "SENSOR",
+          "IGUAL",
+          "NUMERO",
+          "PUNTO_Y_COMA",
+          "CARGAR",
+          "SENSOR",
+          "IGUAL",
+          "NUMERO",
+          "PUNTO_Y_COMA",
+          "SI",
+          "SENSOR",
+          "COMPARADOR",
+          "NUMERO",
+          "Y",
+          "SENSOR",
+          "COMPARADOR",
+          "NUMERO",
+          "ENTONCES",
+          "AVISAR",
+          "ACCION",
+          "PUNTO_Y_COMA"
+        ]
+      ],
+      "traza": [
+        {
+          "pila": [
+            0
+          ],
+          "entrada": [
+            "CARGAR",
+            "SENSOR",
+            "IGUAL",
+            "NUMERO",
+            "PUNTO_Y_COMA",
+            "CARGAR",
+            "SENSOR",
+            "IGUAL",
+            "NUMERO",
+            "PUNTO_Y_COMA",
+            "SI",
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "Y",
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "ENTONCES",
+            "AVISAR",
+            "ACCION",
+            "PUNTO_Y_COMA",
+            "$"
+          ],
+          "accion": "d1"
+        },
+        {
+          "pila": [
+            0,
+            1
+          ],
+          "entrada": [
+            "SENSOR",
+            "IGUAL",
+            "NUMERO",
+            "PUNTO_Y_COMA",
+            "CARGAR",
+            "SENSOR",
+            "IGUAL",
+            "NUMERO",
+            "PUNTO_Y_COMA",
+            "SI",
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "Y",
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "ENTONCES",
+            "AVISAR",
+            "ACCION",
+            "PUNTO_Y_COMA",
+            "$"
+          ],
+          "accion": "d5"
+        },
+        {
+          "pila": [
+            0,
+            1,
+            5
+          ],
+          "entrada": [
+            "IGUAL",
+            "NUMERO",
+            "PUNTO_Y_COMA",
+            "CARGAR",
+            "SENSOR",
+            "IGUAL",
+            "NUMERO",
+            "PUNTO_Y_COMA",
+            "SI",
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "Y",
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "ENTONCES",
+            "AVISAR",
+            "ACCION",
+            "PUNTO_Y_COMA",
+            "$"
+          ],
+          "accion": "d10"
+        },
+        {
+          "pila": [
+            0,
+            1,
+            5,
+            10
+          ],
+          "entrada": [
+            "NUMERO",
+            "PUNTO_Y_COMA",
+            "CARGAR",
+            "SENSOR",
+            "IGUAL",
+            "NUMERO",
+            "PUNTO_Y_COMA",
+            "SI",
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "Y",
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "ENTONCES",
+            "AVISAR",
+            "ACCION",
+            "PUNTO_Y_COMA",
+            "$"
+          ],
+          "accion": "d15"
+        },
+        {
+          "pila": [
+            0,
+            1,
+            5,
+            10,
+            15
+          ],
+          "entrada": [
+            "PUNTO_Y_COMA",
+            "CARGAR",
+            "SENSOR",
+            "IGUAL",
+            "NUMERO",
+            "PUNTO_Y_COMA",
+            "SI",
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "Y",
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "ENTONCES",
+            "AVISAR",
+            "ACCION",
+            "PUNTO_Y_COMA",
+            "$"
+          ],
+          "accion": "d20"
+        },
+        {
+          "pila": [
+            0,
+            1,
+            5,
+            10,
+            15,
+            20
+          ],
+          "entrada": [
+            "CARGAR",
+            "SENSOR",
+            "IGUAL",
+            "NUMERO",
+            "PUNTO_Y_COMA",
+            "SI",
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "Y",
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "ENTONCES",
+            "AVISAR",
+            "ACCION",
+            "PUNTO_Y_COMA",
+            "$"
+          ],
+          "accion": "r6"
+        },
+        {
+          "pila": [
+            0,
+            4
+          ],
+          "entrada": [
+            "CARGAR",
+            "SENSOR",
+            "IGUAL",
+            "NUMERO",
+            "PUNTO_Y_COMA",
+            "SI",
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "Y",
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "ENTONCES",
+            "AVISAR",
+            "ACCION",
+            "PUNTO_Y_COMA",
+            "$"
+          ],
+          "accion": "d1"
+        },
+        {
+          "pila": [
+            0,
+            4,
+            1
+          ],
+          "entrada": [
+            "SENSOR",
+            "IGUAL",
+            "NUMERO",
+            "PUNTO_Y_COMA",
+            "SI",
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "Y",
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "ENTONCES",
+            "AVISAR",
+            "ACCION",
+            "PUNTO_Y_COMA",
+            "$"
+          ],
+          "accion": "d5"
+        },
+        {
+          "pila": [
+            0,
+            4,
+            1,
+            5
+          ],
+          "entrada": [
+            "IGUAL",
+            "NUMERO",
+            "PUNTO_Y_COMA",
+            "SI",
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "Y",
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "ENTONCES",
+            "AVISAR",
+            "ACCION",
+            "PUNTO_Y_COMA",
+            "$"
+          ],
+          "accion": "d10"
+        },
+        {
+          "pila": [
+            0,
+            4,
+            1,
+            5,
+            10
+          ],
+          "entrada": [
+            "NUMERO",
+            "PUNTO_Y_COMA",
+            "SI",
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "Y",
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "ENTONCES",
+            "AVISAR",
+            "ACCION",
+            "PUNTO_Y_COMA",
+            "$"
+          ],
+          "accion": "d15"
+        },
+        {
+          "pila": [
+            0,
+            4,
+            1,
+            5,
+            10,
+            15
+          ],
+          "entrada": [
+            "PUNTO_Y_COMA",
+            "SI",
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "Y",
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "ENTONCES",
+            "AVISAR",
+            "ACCION",
+            "PUNTO_Y_COMA",
+            "$"
+          ],
+          "accion": "d20"
+        },
+        {
+          "pila": [
+            0,
+            4,
+            1,
+            5,
+            10,
+            15,
+            20
+          ],
+          "entrada": [
+            "SI",
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "Y",
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "ENTONCES",
+            "AVISAR",
+            "ACCION",
+            "PUNTO_Y_COMA",
+            "$"
+          ],
+          "accion": "r6"
+        },
+        {
+          "pila": [
+            0,
+            4,
+            4
+          ],
+          "entrada": [
+            "SI",
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "Y",
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "ENTONCES",
+            "AVISAR",
+            "ACCION",
+            "PUNTO_Y_COMA",
+            "$"
+          ],
+          "accion": "r3"
+        },
+        {
+          "pila": [
+            0,
+            4,
+            9
+          ],
+          "entrada": [
+            "SI",
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "Y",
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "ENTONCES",
+            "AVISAR",
+            "ACCION",
+            "PUNTO_Y_COMA",
+            "$"
+          ],
+          "accion": "r2"
+        },
+        {
+          "pila": [
+            0,
+            3
+          ],
+          "entrada": [
+            "SI",
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "Y",
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "ENTONCES",
+            "AVISAR",
+            "ACCION",
+            "PUNTO_Y_COMA",
+            "$"
+          ],
+          "accion": "d6"
+        },
+        {
+          "pila": [
+            0,
+            3,
+            6
+          ],
+          "entrada": [
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "Y",
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "ENTONCES",
+            "AVISAR",
+            "ACCION",
+            "PUNTO_Y_COMA",
+            "$"
+          ],
+          "accion": "d11"
+        },
+        {
+          "pila": [
+            0,
+            3,
+            6,
+            11
+          ],
+          "entrada": [
+            "COMPARADOR",
+            "NUMERO",
+            "Y",
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "ENTONCES",
+            "AVISAR",
+            "ACCION",
+            "PUNTO_Y_COMA",
+            "$"
+          ],
+          "accion": "d16"
+        },
+        {
+          "pila": [
+            0,
+            3,
+            6,
+            11,
+            16
+          ],
+          "entrada": [
+            "NUMERO",
+            "Y",
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "ENTONCES",
+            "AVISAR",
+            "ACCION",
+            "PUNTO_Y_COMA",
+            "$"
+          ],
+          "accion": "d21"
+        },
+        {
+          "pila": [
+            0,
+            3,
+            6,
+            11,
+            16,
+            21
+          ],
+          "entrada": [
+            "Y",
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "ENTONCES",
+            "AVISAR",
+            "ACCION",
+            "PUNTO_Y_COMA",
+            "$"
+          ],
+          "accion": "r11"
+        },
+        {
+          "pila": [
+            0,
+            3,
+            6,
+            13
+          ],
+          "entrada": [
+            "Y",
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "ENTONCES",
+            "AVISAR",
+            "ACCION",
+            "PUNTO_Y_COMA",
+            "$"
+          ],
+          "accion": "d18"
+        },
+        {
+          "pila": [
+            0,
+            3,
+            6,
+            13,
+            18
+          ],
+          "entrada": [
+            "SENSOR",
+            "COMPARADOR",
+            "NUMERO",
+            "ENTONCES",
+            "AVISAR",
+            "ACCION",
+            "PUNTO_Y_COMA",
+            "$"
+          ],
+          "accion": "d11"
+        },
+        {
+          "pila": [
+            0,
+            3,
+            6,
+            13,
+            18,
+            11
+          ],
+          "entrada": [
+            "COMPARADOR",
+            "NUMERO",
+            "ENTONCES",
+            "AVISAR",
+            "ACCION",
+            "PUNTO_Y_COMA",
+            "$"
+          ],
+          "accion": "d16"
+        },
+        {
+          "pila": [
+            0,
+            3,
+            6,
+            13,
+            18,
+            11,
+            16
+          ],
+          "entrada": [
+            "NUMERO",
+            "ENTONCES",
+            "AVISAR",
+            "ACCION",
+            "PUNTO_Y_COMA",
+            "$"
+          ],
+          "accion": "d21"
+        },
+        {
+          "pila": [
+            0,
+            3,
+            6,
+            13,
+            18,
+            11,
+            16,
+            21
+          ],
+          "entrada": [
+            "ENTONCES",
+            "AVISAR",
+            "ACCION",
+            "PUNTO_Y_COMA",
+            "$"
+          ],
+          "accion": "r11"
+        },
+        {
+          "pila": [
+            0,
+            3,
+            6,
+            13,
+            18,
+            23
+          ],
+          "entrada": [
+            "ENTONCES",
+            "AVISAR",
+            "ACCION",
+            "PUNTO_Y_COMA",
+            "$"
+          ],
+          "accion": "r10"
+        },
+        {
+          "pila": [
+            0,
+            3,
+            6,
+            13,
+            18,
+            23,
+            25
+          ],
+          "entrada": [
+            "ENTONCES",
+            "AVISAR",
+            "ACCION",
+            "PUNTO_Y_COMA",
+            "$"
+          ],
+          "accion": "r9"
+        },
+        {
+          "pila": [
+            0,
+            3,
+            6,
+            13,
+            19
+          ],
+          "entrada": [
+            "ENTONCES",
+            "AVISAR",
+            "ACCION",
+            "PUNTO_Y_COMA",
+            "$"
+          ],
+          "accion": "r8"
+        },
+        {
+          "pila": [
+            0,
+            3,
+            6,
+            12
+          ],
+          "entrada": [
+            "ENTONCES",
+            "AVISAR",
+            "ACCION",
+            "PUNTO_Y_COMA",
+            "$"
+          ],
+          "accion": "d17"
+        },
+        {
+          "pila": [
+            0,
+            3,
+            6,
+            12,
+            17
+          ],
+          "entrada": [
+            "AVISAR",
+            "ACCION",
+            "PUNTO_Y_COMA",
+            "$"
+          ],
+          "accion": "d22"
+        },
+        {
+          "pila": [
+            0,
+            3,
+            6,
+            12,
+            17,
+            22
+          ],
+          "entrada": [
+            "ACCION",
+            "PUNTO_Y_COMA",
+            "$"
+          ],
+          "accion": "d24"
+        },
+        {
+          "pila": [
+            0,
+            3,
+            6,
+            12,
+            17,
+            22,
+            24
+          ],
+          "entrada": [
+            "PUNTO_Y_COMA",
+            "$"
+          ],
+          "accion": "d26"
+        },
+        {
+          "pila": [
+            0,
+            3,
+            6,
+            12,
+            17,
+            22,
+            24,
+            26
+          ],
+          "entrada": [
+            "$"
+          ],
+          "accion": "r7"
+        },
+        {
+          "pila": [
+            0,
+            3,
+            8
+          ],
+          "entrada": [
+            "$"
+          ],
+          "accion": "r5"
+        },
+        {
+          "pila": [
+            0,
+            3,
+            7
+          ],
+          "entrada": [
+            "$"
+          ],
+          "accion": "r1"
+        },
+        {
+          "pila": [
+            0,
+            2
+          ],
+          "entrada": [
+            "$"
+          ],
+          "accion": "aceptar"
+        }
+      ],
+      "errores_sintacticos": [],
+      "estructura": {
+        "cargas": [
+          {
+            "sensor": "S01",
+            "valor": "28",
+            "linea": 1,
+            "columna": 8,
+            "columna_valor": 14
+          },
+          {
+            "sensor": "S02",
+            "valor": "15",
+            "linea": 2,
+            "columna": 8,
+            "columna_valor": 14
+          }
+        ],
+        "reglas": [
+          {
+            "comparaciones": [
+              {
+                "sensor": "S01",
+                "comparador": ">",
+                "valor": "26",
+                "linea": 3,
+                "columna": 4,
+                "columna_valor": 10
+              },
+              {
+                "sensor": "S02",
+                "comparador": "<",
+                "valor": "20",
+                "linea": 3,
+                "columna": 15,
+                "columna_valor": 21
+              }
+            ],
+            "accion": "A01",
+            "linea": 3,
+            "columna": 40
+          }
+        ]
+      },
+      "linea": 1,
+      "sintaxis_aceptada": true,
+      "fase": "aceptado",
+      "atributos": [
+        {
+          "campo": "sensor",
+          "lexema": "S01",
+          "tipo": "sensor",
+          "accion": "Código de sensor conocido",
+          "valido": true,
+          "linea": 1
+        },
+        {
+          "campo": "referencia",
+          "lexema": "S01",
+          "tipo": "referencia",
+          "accion": "Carga única",
+          "valido": true,
+          "linea": 1
+        },
+        {
+          "campo": "valor",
+          "lexema": "28",
+          "tipo": "entero",
+          "accion": "Valor dentro del rango del sensor",
+          "valido": true,
+          "linea": 1
+        },
+        {
+          "campo": "sensor",
+          "lexema": "S02",
+          "tipo": "sensor",
+          "accion": "Código de sensor conocido",
+          "valido": true,
+          "linea": 2
+        },
+        {
+          "campo": "referencia",
+          "lexema": "S02",
+          "tipo": "referencia",
+          "accion": "Carga única",
+          "valido": true,
+          "linea": 2
+        },
+        {
+          "campo": "valor",
+          "lexema": "15",
+          "tipo": "entero",
+          "accion": "Valor dentro del rango del sensor",
+          "valido": true,
+          "linea": 2
+        },
+        {
+          "campo": "sensor",
+          "lexema": "S01",
+          "tipo": "sensor",
+          "accion": "Código de sensor conocido",
+          "valido": true,
+          "linea": 3
+        },
+        {
+          "campo": "referencia",
+          "lexema": "S01",
+          "tipo": "referencia",
+          "accion": "Sensor cargado previamente",
+          "valido": true,
+          "linea": 3
+        },
+        {
+          "campo": "valor",
+          "lexema": "26",
+          "tipo": "entero",
+          "accion": "Valor dentro del rango del sensor",
+          "valido": true,
+          "linea": 3
+        },
+        {
+          "campo": "comparador",
+          "lexema": ">",
+          "tipo": "operador",
+          "accion": "Comparador permitido",
+          "valido": true,
+          "linea": 3
+        },
+        {
+          "campo": "sensor",
+          "lexema": "S02",
+          "tipo": "sensor",
+          "accion": "Código de sensor conocido",
+          "valido": true,
+          "linea": 3
+        },
+        {
+          "campo": "referencia",
+          "lexema": "S02",
+          "tipo": "referencia",
+          "accion": "Sensor cargado previamente",
+          "valido": true,
+          "linea": 3
+        },
+        {
+          "campo": "valor",
+          "lexema": "20",
+          "tipo": "entero",
+          "accion": "Valor dentro del rango del sensor",
+          "valido": true,
+          "linea": 3
+        },
+        {
+          "campo": "comparador",
+          "lexema": "<",
+          "tipo": "operador",
+          "accion": "Comparador permitido",
+          "valido": true,
+          "linea": 3
+        },
+        {
+          "campo": "accion",
+          "lexema": "A01",
+          "tipo": "accion",
+          "accion": "Código de acción conocido",
+          "valido": true,
+          "linea": 3
+        }
+      ],
+      "errores_semanticos": [],
+      "salida": {
+        "estado": "aceptado",
+        "avisos": [
+          {
+            "codigo": "A01",
+            "descripcion": "Revisión técnica simulada"
+          }
+        ]
+      }
+    }
+  ],
+  "aceptado": true,
+  "slr": {
+    "inicial": "P",
+    "producciones": [
+      [
+        "P'",
+        [
+          "P"
+        ]
+      ],
+      [
+        "P",
+        [
+          "CARGAS",
+          "REGLAS"
+        ]
+      ],
+      [
+        "CARGAS",
+        [
+          "CARGA",
+          "CARGAS"
+        ]
+      ],
+      [
+        "CARGAS",
+        [
+          "CARGA"
+        ]
+      ],
+      [
+        "REGLAS",
+        [
+          "REGLA",
+          "REGLAS"
+        ]
+      ],
+      [
+        "REGLAS",
+        [
+          "REGLA"
+        ]
+      ],
+      [
+        "CARGA",
+        [
+          "CARGAR",
+          "SENSOR",
+          "IGUAL",
+          "NUMERO",
+          "PUNTO_Y_COMA"
+        ]
+      ],
+      [
+        "REGLA",
+        [
+          "SI",
+          "COND",
+          "ENTONCES",
+          "AVISAR",
+          "ACCION",
+          "PUNTO_Y_COMA"
+        ]
+      ],
+      [
+        "COND",
+        [
+          "COMP",
+          "RESTO"
+        ]
+      ],
+      [
+        "RESTO",
+        [
+          "Y",
+          "COMP",
+          "RESTO"
+        ]
+      ],
+      [
+        "RESTO",
+        []
+      ],
+      [
+        "COMP",
+        [
+          "SENSOR",
+          "COMPARADOR",
+          "NUMERO"
+        ]
+      ]
+    ],
+    "terminales": [
+      "CARGAR",
+      "SENSOR",
+      "IGUAL",
+      "NUMERO",
+      "PUNTO_Y_COMA",
+      "SI",
+      "ENTONCES",
+      "AVISAR",
+      "ACCION",
+      "Y",
+      "COMPARADOR"
+    ],
+    "no_terminales": [
+      "P",
+      "CARGAS",
+      "REGLAS",
+      "CARGA",
+      "REGLA",
+      "COND",
+      "RESTO",
+      "COMP"
+    ],
+    "estados": [
+      [
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          6,
+          0
+        ]
+      ],
+      [
+        [
+          6,
+          1
+        ]
+      ],
+      [
+        [
+          0,
+          1
+        ]
+      ],
+      [
+        [
+          1,
+          1
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          5,
+          0
+        ],
+        [
+          7,
+          0
+        ]
+      ],
+      [
+        [
+          2,
+          0
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          6,
+          0
+        ]
+      ],
+      [
+        [
+          6,
+          2
+        ]
+      ],
+      [
+        [
+          7,
+          1
+        ],
+        [
+          8,
+          0
+        ],
+        [
+          11,
+          0
+        ]
+      ],
+      [
+        [
+          1,
+          2
+        ]
+      ],
+      [
+        [
+          4,
+          0
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          5,
+          0
+        ],
+        [
+          5,
+          1
+        ],
+        [
+          7,
+          0
+        ]
+      ],
+      [
+        [
+          2,
+          2
+        ]
+      ],
+      [
+        [
+          6,
+          3
+        ]
+      ],
+      [
+        [
+          11,
+          1
+        ]
+      ],
+      [
+        [
+          7,
+          2
+        ]
+      ],
+      [
+        [
+          8,
+          1
+        ],
+        [
+          9,
+          0
+        ],
+        [
+          10,
+          0
+        ]
+      ],
+      [
+        [
+          4,
+          2
+        ]
+      ],
+      [
+        [
+          6,
+          4
+        ]
+      ],
+      [
+        [
+          11,
+          2
+        ]
+      ],
+      [
+        [
+          7,
+          3
+        ]
+      ],
+      [
+        [
+          9,
+          1
+        ],
+        [
+          11,
+          0
+        ]
+      ],
+      [
+        [
+          8,
+          2
+        ]
+      ],
+      [
+        [
+          6,
+          5
+        ]
+      ],
+      [
+        [
+          11,
+          3
+        ]
+      ],
+      [
+        [
+          7,
+          4
+        ]
+      ],
+      [
+        [
+          9,
+          0
+        ],
+        [
+          9,
+          2
+        ],
+        [
+          10,
+          0
+        ]
+      ],
+      [
+        [
+          7,
+          5
+        ]
+      ],
+      [
+        [
+          9,
+          3
+        ]
+      ],
+      [
+        [
+          7,
+          6
+        ]
+      ]
+    ],
+    "transiciones": [
+      {
+        "origen": 0,
+        "simbolo": "CARGAR",
+        "destino": 1
+      },
+      {
+        "origen": 0,
+        "simbolo": "P",
+        "destino": 2
+      },
+      {
+        "origen": 0,
+        "simbolo": "CARGAS",
+        "destino": 3
+      },
+      {
+        "origen": 0,
+        "simbolo": "CARGA",
+        "destino": 4
+      },
+      {
+        "origen": 1,
+        "simbolo": "SENSOR",
+        "destino": 5
+      },
+      {
+        "origen": 3,
+        "simbolo": "SI",
+        "destino": 6
+      },
+      {
+        "origen": 3,
+        "simbolo": "REGLAS",
+        "destino": 7
+      },
+      {
+        "origen": 3,
+        "simbolo": "REGLA",
+        "destino": 8
+      },
+      {
+        "origen": 4,
+        "simbolo": "CARGAR",
+        "destino": 1
+      },
+      {
+        "origen": 4,
+        "simbolo": "CARGAS",
+        "destino": 9
+      },
+      {
+        "origen": 4,
+        "simbolo": "CARGA",
+        "destino": 4
+      },
+      {
+        "origen": 5,
+        "simbolo": "IGUAL",
+        "destino": 10
+      },
+      {
+        "origen": 6,
+        "simbolo": "SENSOR",
+        "destino": 11
+      },
+      {
+        "origen": 6,
+        "simbolo": "COND",
+        "destino": 12
+      },
+      {
+        "origen": 6,
+        "simbolo": "COMP",
+        "destino": 13
+      },
+      {
+        "origen": 8,
+        "simbolo": "SI",
+        "destino": 6
+      },
+      {
+        "origen": 8,
+        "simbolo": "REGLAS",
+        "destino": 14
+      },
+      {
+        "origen": 8,
+        "simbolo": "REGLA",
+        "destino": 8
+      },
+      {
+        "origen": 10,
+        "simbolo": "NUMERO",
+        "destino": 15
+      },
+      {
+        "origen": 11,
+        "simbolo": "COMPARADOR",
+        "destino": 16
+      },
+      {
+        "origen": 12,
+        "simbolo": "ENTONCES",
+        "destino": 17
+      },
+      {
+        "origen": 13,
+        "simbolo": "Y",
+        "destino": 18
+      },
+      {
+        "origen": 13,
+        "simbolo": "RESTO",
+        "destino": 19
+      },
+      {
+        "origen": 15,
+        "simbolo": "PUNTO_Y_COMA",
+        "destino": 20
+      },
+      {
+        "origen": 16,
+        "simbolo": "NUMERO",
+        "destino": 21
+      },
+      {
+        "origen": 17,
+        "simbolo": "AVISAR",
+        "destino": 22
+      },
+      {
+        "origen": 18,
+        "simbolo": "SENSOR",
+        "destino": 11
+      },
+      {
+        "origen": 18,
+        "simbolo": "COMP",
+        "destino": 23
+      },
+      {
+        "origen": 22,
+        "simbolo": "ACCION",
+        "destino": 24
+      },
+      {
+        "origen": 23,
+        "simbolo": "Y",
+        "destino": 18
+      },
+      {
+        "origen": 23,
+        "simbolo": "RESTO",
+        "destino": 25
+      },
+      {
+        "origen": 24,
+        "simbolo": "PUNTO_Y_COMA",
+        "destino": 26
+      }
+    ],
+    "primeros": {
+      "P": [
+        "CARGAR"
+      ],
+      "CARGAS": [
+        "CARGAR"
+      ],
+      "REGLAS": [
+        "SI"
+      ],
+      "CARGA": [
+        "CARGAR"
+      ],
+      "REGLA": [
+        "SI"
+      ],
+      "COND": [
+        "SENSOR"
+      ],
+      "RESTO": [
+        "Y",
+        "ε"
+      ],
+      "COMP": [
+        "SENSOR"
+      ]
+    },
+    "siguientes": {
+      "P": [
+        "$"
+      ],
+      "CARGAS": [
+        "SI"
+      ],
+      "REGLAS": [
+        "$"
+      ],
+      "CARGA": [
+        "CARGAR",
+        "SI"
+      ],
+      "REGLA": [
+        "$",
+        "SI"
+      ],
+      "COND": [
+        "ENTONCES"
+      ],
+      "RESTO": [
+        "ENTONCES"
+      ],
+      "COMP": [
+        "ENTONCES",
+        "Y"
+      ]
+    },
+    "acciones": [
+      {
+        "CARGAR": "d1"
+      },
+      {
+        "SENSOR": "d5"
+      },
+      {
+        "$": "aceptar"
+      },
+      {
+        "SI": "d6"
+      },
+      {
+        "CARGAR": "d1",
+        "SI": "r3"
+      },
+      {
+        "IGUAL": "d10"
+      },
+      {
+        "SENSOR": "d11"
+      },
+      {
+        "$": "r1"
+      },
+      {
+        "SI": "d6",
+        "$": "r5"
+      },
+      {
+        "SI": "r2"
+      },
+      {
+        "NUMERO": "d15"
+      },
+      {
+        "COMPARADOR": "d16"
+      },
+      {
+        "ENTONCES": "d17"
+      },
+      {
+        "Y": "d18",
+        "ENTONCES": "r10"
+      },
+      {
+        "$": "r4"
+      },
+      {
+        "PUNTO_Y_COMA": "d20"
+      },
+      {
+        "NUMERO": "d21"
+      },
+      {
+        "AVISAR": "d22"
+      },
+      {
+        "SENSOR": "d11"
+      },
+      {
+        "ENTONCES": "r8"
+      },
+      {
+        "CARGAR": "r6",
+        "SI": "r6"
+      },
+      {
+        "ENTONCES": "r11",
+        "Y": "r11"
+      },
+      {
+        "ACCION": "d24"
+      },
+      {
+        "Y": "d18",
+        "ENTONCES": "r10"
+      },
+      {
+        "PUNTO_Y_COMA": "d26"
+      },
+      {
+        "ENTONCES": "r9"
+      },
+      {
+        "$": "r7",
+        "SI": "r7"
+      }
+    ],
+    "saltos": [
+      {
+        "P": 2,
+        "CARGAS": 3,
+        "CARGA": 4
+      },
+      {},
+      {},
+      {
+        "REGLAS": 7,
+        "REGLA": 8
+      },
+      {
+        "CARGAS": 9,
+        "CARGA": 4
+      },
+      {},
+      {
+        "COND": 12,
+        "COMP": 13
+      },
+      {},
+      {
+        "REGLAS": 14,
+        "REGLA": 8
+      },
+      {},
+      {},
+      {},
+      {},
+      {
+        "RESTO": 19
+      },
+      {},
+      {},
+      {},
+      {},
+      {
+        "COMP": 23
+      },
+      {},
+      {},
+      {},
+      {},
+      {
+        "RESTO": 25
+      },
+      {},
+      {},
+      {}
+    ],
+    "conflictos": []
+  },
+  "salida": {
+    "estado": "aceptado",
+    "avisos": [
+      {
+        "codigo": "A01",
+        "descripcion": "Revisión técnica simulada"
+      }
+    ]
+  },
+  "codigo": [
+    {
+      "op": "PUSH",
+      "arg": 28
+    },
+    {
+      "op": "STORE",
+      "arg": "S01"
+    },
+    {
+      "op": "PUSH",
+      "arg": 15
+    },
+    {
+      "op": "STORE",
+      "arg": "S02"
+    },
+    {
+      "op": "LOAD",
+      "arg": "S01"
+    },
+    {
+      "op": "PUSH",
+      "arg": 26
+    },
+    {
+      "op": "GT"
+    },
+    {
+      "op": "JUMP_IF_FALSE",
+      "arg": "L1"
+    },
+    {
+      "op": "LOAD",
+      "arg": "S02"
+    },
+    {
+      "op": "PUSH",
+      "arg": 20
+    },
+    {
+      "op": "LT"
+    },
+    {
+      "op": "JUMP_IF_FALSE",
+      "arg": "L1"
+    },
+    {
+      "op": "EMIT",
+      "arg": "A01"
+    },
+    {
+      "op": "LABEL",
+      "arg": "L1"
+    }
+  ],
+  "correspondencias": [
+    {
+      "regla": 1,
+      "linea": 3,
+      "inicio": 4,
+      "fin": 13,
+      "etiqueta": "L1"
+    }
+  ],
+  "simulacion": {
+    "memoria": {
+      "S01": 28,
+      "S02": 15
+    },
+    "avisos": [
+      {
+        "codigo": "A01",
+        "descripcion": "Revisión técnica simulada"
+      }
+    ],
+    "pasos": 14,
+    "ejecutadas": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13
+    ]
+  }
+}

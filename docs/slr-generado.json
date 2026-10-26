@@ -1,0 +1,727 @@
+{
+  "inicial": "P",
+  "producciones": [
+    [
+      "P'",
+      [
+        "P"
+      ]
+    ],
+    [
+      "P",
+      [
+        "CARGAS",
+        "REGLAS"
+      ]
+    ],
+    [
+      "CARGAS",
+      [
+        "CARGA",
+        "CARGAS"
+      ]
+    ],
+    [
+      "CARGAS",
+      [
+        "CARGA"
+      ]
+    ],
+    [
+      "REGLAS",
+      [
+        "REGLA",
+        "REGLAS"
+      ]
+    ],
+    [
+      "REGLAS",
+      [
+        "REGLA"
+      ]
+    ],
+    [
+      "CARGA",
+      [
+        "CARGAR",
+        "SENSOR",
+        "IGUAL",
+        "NUMERO",
+        "PUNTO_Y_COMA"
+      ]
+    ],
+    [
+      "REGLA",
+      [
+        "SI",
+        "COND",
+        "ENTONCES",
+        "AVISAR",
+        "ACCION",
+        "PUNTO_Y_COMA"
+      ]
+    ],
+    [
+      "COND",
+      [
+        "COMP",
+        "RESTO"
+      ]
+    ],
+    [
+      "RESTO",
+      [
+        "Y",
+        "COMP",
+        "RESTO"
+      ]
+    ],
+    [
+      "RESTO",
+      []
+    ],
+    [
+      "COMP",
+      [
+        "SENSOR",
+        "COMPARADOR",
+        "NUMERO"
+      ]
+    ]
+  ],
+  "terminales": [
+    "CARGAR",
+    "SENSOR",
+    "IGUAL",
+    "NUMERO",
+    "PUNTO_Y_COMA",
+    "SI",
+    "ENTONCES",
+    "AVISAR",
+    "ACCION",
+    "Y",
+    "COMPARADOR"
+  ],
+  "no_terminales": [
+    "P",
+    "CARGAS",
+    "REGLAS",
+    "CARGA",
+    "REGLA",
+    "COND",
+    "RESTO",
+    "COMP"
+  ],
+  "estados": [
+    [
+      [
+        0,
+        0
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        2,
+        0
+      ],
+      [
+        3,
+        0
+      ],
+      [
+        6,
+        0
+      ]
+    ],
+    [
+      [
+        6,
+        1
+      ]
+    ],
+    [
+      [
+        0,
+        1
+      ]
+    ],
+    [
+      [
+        1,
+        1
+      ],
+      [
+        4,
+        0
+      ],
+      [
+        5,
+        0
+      ],
+      [
+        7,
+        0
+      ]
+    ],
+    [
+      [
+        2,
+        0
+      ],
+      [
+        2,
+        1
+      ],
+      [
+        3,
+        0
+      ],
+      [
+        3,
+        1
+      ],
+      [
+        6,
+        0
+      ]
+    ],
+    [
+      [
+        6,
+        2
+      ]
+    ],
+    [
+      [
+        7,
+        1
+      ],
+      [
+        8,
+        0
+      ],
+      [
+        11,
+        0
+      ]
+    ],
+    [
+      [
+        1,
+        2
+      ]
+    ],
+    [
+      [
+        4,
+        0
+      ],
+      [
+        4,
+        1
+      ],
+      [
+        5,
+        0
+      ],
+      [
+        5,
+        1
+      ],
+      [
+        7,
+        0
+      ]
+    ],
+    [
+      [
+        2,
+        2
+      ]
+    ],
+    [
+      [
+        6,
+        3
+      ]
+    ],
+    [
+      [
+        11,
+        1
+      ]
+    ],
+    [
+      [
+        7,
+        2
+      ]
+    ],
+    [
+      [
+        8,
+        1
+      ],
+      [
+        9,
+        0
+      ],
+      [
+        10,
+        0
+      ]
+    ],
+    [
+      [
+        4,
+        2
+      ]
+    ],
+    [
+      [
+        6,
+        4
+      ]
+    ],
+    [
+      [
+        11,
+        2
+      ]
+    ],
+    [
+      [
+        7,
+        3
+      ]
+    ],
+    [
+      [
+        9,
+        1
+      ],
+      [
+        11,
+        0
+      ]
+    ],
+    [
+      [
+        8,
+        2
+      ]
+    ],
+    [
+      [
+        6,
+        5
+      ]
+    ],
+    [
+      [
+        11,
+        3
+      ]
+    ],
+    [
+      [
+        7,
+        4
+      ]
+    ],
+    [
+      [
+        9,
+        0
+      ],
+      [
+        9,
+        2
+      ],
+      [
+        10,
+        0
+      ]
+    ],
+    [
+      [
+        7,
+        5
+      ]
+    ],
+    [
+      [
+        9,
+        3
+      ]
+    ],
+    [
+      [
+        7,
+        6
+      ]
+    ]
+  ],
+  "transiciones": [
+    {
+      "origen": 0,
+      "simbolo": "CARGAR",
+      "destino": 1
+    },
+    {
+      "origen": 0,
+      "simbolo": "P",
+      "destino": 2
+    },
+    {
+      "origen": 0,
+      "simbolo": "CARGAS",
+      "destino": 3
+    },
+    {
+      "origen": 0,
+      "simbolo": "CARGA",
+      "destino": 4
+    },
+    {
+      "origen": 1,
+      "simbolo": "SENSOR",
+      "destino": 5
+    },
+    {
+      "origen": 3,
+      "simbolo": "SI",
+      "destino": 6
+    },
+    {
+      "origen": 3,
+      "simbolo": "REGLAS",
+      "destino": 7
+    },
+    {
+      "origen": 3,
+      "simbolo": "REGLA",
+      "destino": 8
+    },
+    {
+      "origen": 4,
+      "simbolo": "CARGAR",
+      "destino": 1
+    },
+    {
+      "origen": 4,
+      "simbolo": "CARGAS",
+      "destino": 9
+    },
+    {
+      "origen": 4,
+      "simbolo": "CARGA",
+      "destino": 4
+    },
+    {
+      "origen": 5,
+      "simbolo": "IGUAL",
+      "destino": 10
+    },
+    {
+      "origen": 6,
+      "simbolo": "SENSOR",
+      "destino": 11
+    },
+    {
+      "origen": 6,
+      "simbolo": "COND",
+      "destino": 12
+    },
+    {
+      "origen": 6,
+      "simbolo": "COMP",
+      "destino": 13
+    },
+    {
+      "origen": 8,
+      "simbolo": "SI",
+      "destino": 6
+    },
+    {
+      "origen": 8,
+      "simbolo": "REGLAS",
+      "destino": 14
+    },
+    {
+      "origen": 8,
+      "simbolo": "REGLA",
+      "destino": 8
+    },
+    {
+      "origen": 10,
+      "simbolo": "NUMERO",
+      "destino": 15
+    },
+    {
+      "origen": 11,
+      "simbolo": "COMPARADOR",
+      "destino": 16
+    },
+    {
+      "origen": 12,
+      "simbolo": "ENTONCES",
+      "destino": 17
+    },
+    {
+      "origen": 13,
+      "simbolo": "Y",
+      "destino": 18
+    },
+    {
+      "origen": 13,
+      "simbolo": "RESTO",
+      "destino": 19
+    },
+    {
+      "origen": 15,
+      "simbolo": "PUNTO_Y_COMA",
+      "destino": 20
+    },
+    {
+      "origen": 16,
+      "simbolo": "NUMERO",
+      "destino": 21
+    },
+    {
+      "origen": 17,
+      "simbolo": "AVISAR",
+      "destino": 22
+    },
+    {
+      "origen": 18,
+      "simbolo": "SENSOR",
+      "destino": 11
+    },
+    {
+      "origen": 18,
+      "simbolo": "COMP",
+      "destino": 23
+    },
+    {
+      "origen": 22,
+      "simbolo": "ACCION",
+      "destino": 24
+    },
+    {
+      "origen": 23,
+      "simbolo": "Y",
+      "destino": 18
+    },
+    {
+      "origen": 23,
+      "simbolo": "RESTO",
+      "destino": 25
+    },
+    {
+      "origen": 24,
+      "simbolo": "PUNTO_Y_COMA",
+      "destino": 26
+    }
+  ],
+  "primeros": {
+    "P": [
+      "CARGAR"
+    ],
+    "CARGAS": [
+      "CARGAR"
+    ],
+    "REGLAS": [
+      "SI"
+    ],
+    "CARGA": [
+      "CARGAR"
+    ],
+    "REGLA": [
+      "SI"
+    ],
+    "COND": [
+      "SENSOR"
+    ],
+    "RESTO": [
+      "Y",
+      "ε"
+    ],
+    "COMP": [
+      "SENSOR"
+    ]
+  },
+  "siguientes": {
+    "P": [
+      "$"
+    ],
+    "CARGAS": [
+      "SI"
+    ],
+    "REGLAS": [
+      "$"
+    ],
+    "CARGA": [
+      "CARGAR",
+      "SI"
+    ],
+    "REGLA": [
+      "$",
+      "SI"
+    ],
+    "COND": [
+      "ENTONCES"
+    ],
+    "RESTO": [
+      "ENTONCES"
+    ],
+    "COMP": [
+      "ENTONCES",
+      "Y"
+    ]
+  },
+  "acciones": [
+    {
+      "CARGAR": "d1"
+    },
+    {
+      "SENSOR": "d5"
+    },
+    {
+      "$": "aceptar"
+    },
+    {
+      "SI": "d6"
+    },
+    {
+      "CARGAR": "d1",
+      "SI": "r3"
+    },
+    {
+      "IGUAL": "d10"
+    },
+    {
+      "SENSOR": "d11"
+    },
+    {
+      "$": "r1"
+    },
+    {
+      "SI": "d6",
+      "$": "r5"
+    },
+    {
+      "SI": "r2"
+    },
+    {
+      "NUMERO": "d15"
+    },
+    {
+      "COMPARADOR": "d16"
+    },
+    {
+      "ENTONCES": "d17"
+    },
+    {
+      "Y": "d18",
+      "ENTONCES": "r10"
+    },
+    {
+      "$": "r4"
+    },
+    {
+      "PUNTO_Y_COMA": "d20"
+    },
+    {
+      "NUMERO": "d21"
+    },
+    {
+      "AVISAR": "d22"
+    },
+    {
+      "SENSOR": "d11"
+    },
+    {
+      "ENTONCES": "r8"
+    },
+    {
+      "CARGAR": "r6",
+      "SI": "r6"
+    },
+    {
+      "ENTONCES": "r11",
+      "Y": "r11"
+    },
+    {
+      "ACCION": "d24"
+    },
+    {
+      "Y": "d18",
+      "ENTONCES": "r10"
+    },
+    {
+      "PUNTO_Y_COMA": "d26"
+    },
+    {
+      "ENTONCES": "r9"
+    },
+    {
+      "$": "r7",
+      "SI": "r7"
+    }
+  ],
+  "saltos": [
+    {
+      "P": 2,
+      "CARGAS": 3,
+      "CARGA": 4
+    },
+    {},
+    {},
+    {
+      "REGLAS": 7,
+      "REGLA": 8
+    },
+    {
+      "CARGAS": 9,
+      "CARGA": 4
+    },
+    {},
+    {
+      "COND": 12,
+      "COMP": 13
+    },
+    {},
+    {
+      "REGLAS": 14,
+      "REGLA": 8
+    },
+    {},
+    {},
+    {},
+    {},
+    {
+      "RESTO": 19
+    },
+    {},
+    {},
+    {},
+    {},
+    {
+      "COMP": 23
+    },
+    {},
+    {},
+    {},
+    {},
+    {
+      "RESTO": 25
+    },
+    {},
+    {},
+    {}
+  ],
+  "conflictos": []
+}

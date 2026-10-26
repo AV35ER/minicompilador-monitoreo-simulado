@@ -1,0 +1,490 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minicompilador clínico</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #fff;
+            color: #222;
+            font-family: Arial, sans-serif;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        main {
+            max-width: 1400px;
+            margin: 24px auto;
+            padding: 0 20px 40px;
+        }
+
+        header {
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            font-size: 24px;
+            margin: 5px 0;
+        }
+
+        h2 {
+            font-size: 21px;
+            margin: 0 0 10px;
+        }
+
+        h3, h4 {
+            font-size: 18px;
+            overflow-wrap: anywhere;
+            margin: 14px 0 8px;
+        }
+
+        p {
+            margin: 10px 0;
+        }
+
+        .subtitulo {
+            color: #666;
+            font-size: 14px;
+        }
+
+        section {
+            border-top: 1px solid #ddd;
+            padding-top: 18px;
+            margin-top: 22px;
+        }
+
+        .nota {
+            color: #555;
+            font-size: 14px;
+        }
+
+        .tabla-contenedor {
+            overflow-x: auto;
+            margin: 12px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            font-size: 15px;
+        }
+
+        th {
+            background: #f0f3f0;
+            text-align: left;
+        }
+
+        th, td {
+            border-bottom: 1px solid #ddd;
+            padding: 10px;
+            white-space: normal;
+            overflow-wrap: anywhere;
+            vertical-align: top;
+        }
+
+        .lexemas {
+            min-width: 0;
+            max-width: 260px;
+            white-space: normal;
+        }
+
+        select {
+            font: inherit;
+            padding: 4px 6px;
+            border: 1px solid #aaa;
+            background: white;
+            color: #222;
+        }
+
+        code {
+            font-family: Consolas, monospace;
+            font-size: 15px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 125px;
+            padding: 10px;
+            border: 1px solid #aaa;
+            background: white;
+            font-family: Consolas, monospace;
+            font-size: 16px;
+            resize: vertical;
+        }
+
+        input[type="file"] {
+            display: block;
+            margin: 10px 0;
+            max-width: 100%;
+        }
+
+        button {
+            background: #30563c;
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            font-size: 15px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #354d3a;
+        }
+
+        button:focus-visible {
+            outline: 2px solid #30563c;
+            outline-offset: 2px;
+        }
+
+        .compilar {
+            margin-top: 15px;
+            min-width: 110px;
+        }
+
+        .mensaje {
+            margin-top: 18px;
+            padding: 12px;
+            background: #f1f1f1;
+        }
+
+        .correcto {
+            color: #32613a;
+        }
+
+        .error {
+            color: #a33939;
+        }
+
+        .selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 12px 0;
+        }
+
+        .selector button {
+            background: #f0f3f0;
+            color: #344538;
+            border: 1px solid #b9c5bc;
+        }
+
+        .selector button.activo {
+            background: #30563c;
+            color: white;
+        }
+
+        .panel-token {
+            display: none;
+        }
+
+        .panel-token.activo {
+            display: block;
+        }
+
+        .panel {
+            padding: 0;
+            margin: 14px 0;
+        }
+
+        .grafico {
+            max-width: 100%;
+            min-width: 0;
+            overflow: auto;
+            overscroll-behavior-x: contain;
+            background: white;
+            border: 1px solid #ddd;
+            padding: 10px;
+            min-height: 130px;
+        }
+
+        .grafico svg {
+            display: block;
+            width: auto;
+            max-width: none;
+            height: auto;
+            min-width: 0;
+            margin: 0;
+        }
+
+        .controles {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+            margin: 12px 0;
+        }
+
+        .controles button {
+            padding: 7px 12px;
+            background: #f0f3f0;
+            color: #344538;
+        }
+
+        .quintupla {
+            display: grid;
+            grid-template-columns: 40px minmax(0, 1fr);
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .quintupla div {
+            overflow-wrap: anywhere;
+        }
+
+        .quintupla strong {
+            color: #30563c;
+        }
+
+        .transiciones {
+            margin-top: 14px;
+        }
+
+        .transiciones table {
+            font-size: 14px;
+        }
+
+        .transiciones th {
+            position: sticky;
+            top: 0;
+        }
+
+        details { margin: 14px 0; }
+        summary { cursor: pointer; font-weight: bold; padding: 6px 0; }
+        code { white-space: normal; overflow-wrap: anywhere; }
+        .comparacion-automatas { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: start; }
+        .panel-automata { min-width: 0; }
+        .automata-minimo { grid-column: 1 / -1; }
+        @media (max-width: 1000px) { .comparacion-automatas { grid-template-columns: 1fr; } }
+
+        .etiqueta {
+            display: inline-block;
+            margin-right: 12px;
+            font-size: 14px;
+        }
+
+        @media (max-width: 600px) {
+            main {
+                margin-top: 20px;
+                padding: 0 14px 45px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .panel {
+                padding: 0;
+            }
+        }
+        .tabla-slr th, .tabla-slr td { white-space: nowrap; overflow-wrap: normal; padding: 7px; }
+        .tabla-contenedor, #gramatica, .arbol { min-width: 0; max-width: 100%; }
+        .diccionario td, .diccionario th { padding: 5px 10px; }
+        .bnf { margin: 10px 0; }
+        .nodo-sintactico { margin: 3px 0; min-width: 0; max-width: 100%; }
+        .nodo-sintactico summary { padding: 3px 0; overflow-wrap: anywhere; }
+        .nodo-sintactico summary:focus-visible { outline: 2px solid #30563c; outline-offset: 2px; }
+        .hijos-sintacticos { margin-left: 0; padding-left: clamp(3px, 1vw, 12px); border-left: 1px solid #ccc; display: block; min-width: 0; overflow-wrap: anywhere; }
+        .hoja-sintactica { display: block; font-size: 14px; margin: 3px 0; overflow-wrap: anywhere; }
+        @media print {
+            @page { size: A4 landscape; margin: 12mm; }
+            form, button, .controles { display: none !important; }
+            main { max-width: none; margin: 0; padding: 0; }
+            body, table, code { font-size: 10pt; }
+            .panel-token { display: block !important; break-before: page; }
+            .comparacion-automatas { display: block; }
+            .tabla-contenedor, .grafico { overflow: visible; }
+            .grafico svg { width: 100% !important; max-width: 100% !important; height: auto !important; }
+            .tabla-slr { font-size: 8pt; }
+            .tabla-slr th, .tabla-slr td { padding: 3px; }
+            th { position: static !important; }
+            thead { display: table-header-group; }
+            tr, .grafico { break-inside: avoid; }
+            pre { white-space: pre-wrap; overflow-wrap: anywhere; }
+            .hijos-sintacticos { display: block; }
+        }
+    </style>
+</head>
+<body>
+<main>
+    <header>
+        <div class="subtitulo">Monitoreo simulado de equipos / Teoría de la Computación</div>
+        <h1>Minicompilador clínico</h1>
+    </header>
+
+    <p>Traduce instrucciones codificadas a una máquina de pila y genera avisos operativos simulados. No controla equipos reales ni procesa datos personales.</p>
+
+    <section>
+        <h2>A. Entrada del programa</h2>
+        <p>Escribe cargas y después reglas SI. Cada instrucción termina con <code>;</code>. Los códigos distinguen mayúsculas y minúsculas.</p>
+        <p><code>CARGAR SENSOR = NUMERO;</code><br><code>SI SENSOR COMPARADOR NUMERO [Y SENSOR COMPARADOR NUMERO ...] ENTONCES AVISAR ACCION;</code></p>
+        <p class="nota">Se exige al menos una carga y una regla. Un error rechaza el programa completo. Rangos académicos ficticios, sin significado médico real.</p>
+        <form method="POST" enctype="multipart/form-data">
+            <label for="texto"><strong>Texto de entrada</strong></label>
+
+            <textarea id="texto" name="texto">{{ texto }}</textarea>
+
+            <p><strong>O carga un archivo TXT</strong></p>
+
+            <input type="file" name="archivo" accept=".txt">
+
+            <p class="nota">
+                UTF-8, máximo 1 MiB. El archivo reemplaza el texto escrito.
+            </p>
+
+            <button class="compilar" type="submit">Compilar</button>
+        </form>
+        <div class="tabla-contenedor diccionario"><table><thead><tr><th>Código</th><th>Significado</th><th>Rango entero</th></tr></thead><tbody>
+        {% for codigo, sensor in sensores.items() %}<tr><td>{{ codigo }}</td><td>{{ sensor.descripcion }}</td><td>{{ sensor.minimo }}–{{ sensor.maximo }}</td></tr>{% endfor %}
+        {% for codigo, accion in acciones.items() %}<tr><td>{{ codigo }}</td><td>{{ accion }}</td><td>—</td></tr>{% endfor %}
+        </tbody></table></div>
+
+        <div id="estado-conexion" class="mensaje" role="status" aria-live="polite" hidden></div>
+
+        {% if mensaje %}
+            <div class="mensaje">{{ mensaje }}</div>
+        {% endif %}
+    </section>
+
+    <div id="resultados">
+        {% include "resultados.html" %}
+    </div>
+
+</main>
+
+<script>
+    function seleccionarToken(nombre) {
+        document.querySelectorAll(".panel-token").forEach(panel => {
+            panel.classList.remove("activo");
+        });
+
+        document.querySelectorAll(".boton-token").forEach(boton => {
+            boton.classList.remove("activo");
+        });
+
+        const panel = document.getElementById("token-" + nombre);
+        const boton = document.querySelector(
+            '.boton-token[data-token="' + nombre + '"]'
+        );
+
+        if (panel) {
+            panel.classList.add("activo");
+            ["afnd", "afd", "afd_minimo"].forEach(tipo => {
+                reiniciarZoom("grafico-" + nombre + "-" + tipo);
+            });
+        }
+
+        if (boton) {
+            boton.classList.add("activo");
+        }
+    }
+
+    function seleccionarTipo(nombre, tipo) {
+        document.querySelectorAll('#token-' + nombre + ' .panel-automata').forEach(panel => {
+            panel.hidden = panel.dataset.tipo !== tipo;
+        });
+    }
+
+    function ajustarMarcoSVG(imagen) {
+        if (imagen.dataset.marco || !imagen.getBBox) return;
+        const contenido = imagen.getBBox();
+        // Los SVG ocultos no tienen medidas; se ajustan cuando se abre su panel.
+        if (!contenido.width || !contenido.height) return;
+        const marco = imagen.viewBox.baseVal;
+        const margen = 24;
+        const x = Math.min(marco.x, contenido.x) - margen;
+        const y = Math.min(marco.y, contenido.y) - margen;
+        const ancho = Math.max(marco.x + marco.width, contenido.x + contenido.width) + margen - x;
+        const alto = Math.max(marco.y + marco.height, contenido.y + contenido.height) + margen - y;
+        imagen.setAttribute("viewBox", [x, y, ancho, alto].join(" "));
+        imagen.dataset.marco = "ajustado";
+    }
+
+    function escalaInicial(contenedor, imagen) {
+        // Tamaño natural; el usuario puede ampliar o reducir y desplazarse.
+        return 1;
+    }
+
+    function cambiarZoom(id, factor) {
+        const contenedor = document.getElementById(id);
+        const imagen = contenedor.querySelector("svg");
+
+        ajustarMarcoSVG(imagen);
+        let escala = Number(imagen.dataset.escala || 1);
+        escala = Math.min(4, Math.max(0.5, escala * factor));
+
+        imagen.dataset.zoomManual = "true";
+        imagen.dataset.escala = escala;
+        const dimensiones = imagen.viewBox.baseVal;
+        imagen.style.width = (dimensiones.width * escala) + "px";
+        imagen.style.height = (dimensiones.height * escala) + "px";
+    }
+
+    function reiniciarZoom(id) {
+        const contenedor = document.getElementById(id);
+        const imagen = contenedor.querySelector("svg");
+
+        ajustarMarcoSVG(imagen);
+        const escala = escalaInicial(contenedor, imagen);
+        imagen.dataset.escala = escala;
+        imagen.dataset.zoomManual = "false";
+        const dimensiones = imagen.viewBox.baseVal;
+        imagen.style.width = (dimensiones.width * escala) + "px";
+        imagen.style.height = (dimensiones.height * escala) + "px";
+        contenedor.scrollLeft = 0;
+        contenedor.scrollTop = 0;
+    }
+
+    function inicializarResultados() {
+        document.querySelectorAll(".grafico").forEach(contenedor => {
+            reiniciarZoom(contenedor.id);
+        });
+
+        const primerBoton = document.querySelector(".boton-token");
+
+        if (primerBoton) {
+            seleccionarToken(primerBoton.dataset.token);
+        }
+    }
+    function ajustarGraficosAlAncho() {
+        document.querySelectorAll(".grafico").forEach(contenedor => {
+            if (contenedor.querySelector("svg").dataset.zoomManual !== "true") reiniciarZoom(contenedor.id);
+        });
+    }
+    if (typeof window.addEventListener === "function") {
+        window.addEventListener("resize", ajustarGraficosAlAncho);
+    }
+    let detallesImpresion = null;
+    function prepararImpresion() {
+        if (detallesImpresion) return;
+        detallesImpresion = Array.from(document.querySelectorAll("details"), d => [d, d.open]);
+        detallesImpresion.forEach(([d]) => { d.open = true; });
+    }
+    function restaurarImpresion() {
+        if (!detallesImpresion) return;
+        detallesImpresion.forEach(([d, abierto]) => { d.open = abierto; });
+        detallesImpresion = null;
+    }
+    if (typeof window.addEventListener === "function") {
+        window.addEventListener("beforeprint", prepararImpresion);
+        window.addEventListener("afterprint", restaurarImpresion);
+    }
+    inicializarResultados();
+</script>
+{% if modo_estatico %}
+<script id="lenguaje-config" type="application/json">{{ configuracion_lenguaje|tojson }}</script>
+<script src="/motor.js"></script>
+<script src="/vistas.js"></script>
+<script src="/slr.js"></script>
+<script src="/simulador.js"></script>
+<script src="/clinica.js"></script>
+<script src="/cliente.js"></script>
+{% endif %}
+</body>
+</html>

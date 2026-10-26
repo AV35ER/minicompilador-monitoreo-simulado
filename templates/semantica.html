@@ -1,0 +1,21 @@
+<section id="analisis-semantico">
+    <h3>C.3 Análisis semántico</h3>
+    <p>Comprueba códigos, rangos enteros, cargas únicas y referencias previas. Una condición falsa no es un error.</p>
+    {% for registro in compilacion.registros %}
+    {% if registro.atributos %}
+    <p>{{ registro.atributos|selectattr('valido')|list|length }} de {{ registro.atributos|length }} comprobaciones válidas; {{ compilacion.simulacion.memoria|length if compilacion.simulacion else 0 }} símbolos cargados. Resultado: {{ "válido" if not registro.errores_semanticos else "rechazado" }}.</p>
+    <h4>Símbolos del programa</h4><div class="tabla-contenedor"><table><thead><tr><th>Sensor</th><th>Valor fuente</th><th>Valor simulado</th></tr></thead><tbody>
+    {% for carga in registro.estructura.cargas %}<tr><td>{{ carga.sensor }}</td><td>{{ carga.valor }}</td><td>{{ compilacion.simulacion.memoria.get(carga.sensor, '—') if compilacion.simulacion else 'No ejecutado' }}</td></tr>{% endfor %}</tbody></table></div>
+    <details><summary>Ver comprobaciones semánticas</summary>
+    <div class="tabla-contenedor"><table><thead><tr><th>Línea</th><th>Campo</th><th>Lexema</th><th>Tipo</th><th>Acción realizada</th><th>Resultado</th></tr></thead><tbody>
+    {% for a in registro.atributos %}<tr><td>{{ a.linea }}</td><td>{{ a.campo }}</td><td>{{ a.lexema }}</td><td>{{ a.tipo }}</td><td>{{ a.accion }}</td><td>{{ 'Válido' if a.valido else 'Inválido' }}</td></tr>{% endfor %}
+    </tbody></table></div>
+    </details>
+    {% else %}<p>No ejecutado: el programa tiene errores de análisis {{ registro.fase }}.</p>{% endif %}
+    {% for error in registro.errores_semanticos %}<p class="error">Línea {{ error.linea }}, columna {{ error.columna }}: {{ error.detalle }}</p>{% endfor %}
+    {% endfor %}
+    {% if compilacion.correspondencias %}<h4>Correspondencia entre reglas y traducción</h4>
+    <div class="tabla-contenedor"><table><thead><tr><th>Regla</th><th>Línea</th><th>Índices del código (desde 0)</th><th>Etiqueta de salida</th></tr></thead><tbody>
+    {% for c in compilacion.correspondencias %}<tr><td>{{ c.regla }}</td><td>{{ c.linea }}</td><td>{{ c.inicio }}–{{ c.fin }}</td><td>{{ c.etiqueta }}</td></tr>{% endfor %}
+    </tbody></table></div>{% endif %}
+</section>

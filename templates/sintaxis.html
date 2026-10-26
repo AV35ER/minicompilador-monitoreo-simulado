@@ -1,0 +1,57 @@
+{% macro arbol(nodo, nivel=0) -%}
+{% if nodo.hijos %}<details class="nodo-sintactico" data-simbolo="{{ nodo.simbolo }}"{% if nivel < 3 and nodo.simbolo not in ['CARGA', 'COMP'] %} open{% endif %}><summary>{{ nodo.simbolo }}{% if nodo.simbolo in ['CARGA', 'COMP'] %} — <code>{{ nodo.hijos|map(attribute='lexema')|join(' ')|replace(' ;', ';') }}</code>{% else %} → {{ nodo.hijos|map(attribute='simbolo')|join(' ')|replace('PUNTO_Y_COMA', 'PYC') }}{% endif %}</summary><div class="hijos-sintacticos">{% for hijo in nodo.hijos %}{{ arbol(hijo, nivel + 1) }}{% endfor %}</div></details>
+{% else %}<span class="hoja-sintactica" data-simbolo="{{ nodo.simbolo }}"{% if nodo.lexema is defined %} data-lexema="{{ nodo.lexema }}"{% endif %}><strong>{{ nodo.simbolo }}</strong>: {{ nodo.lexema if nodo.lexema is defined else 'ε' }}</span>{% endif %}
+{%- endmacro %}
+{% set slr = compilacion.slr %}
+<section id="analisis-sintactico">
+    <h3>C.2 Análisis sintáctico</h3>
+    <p>{{ slr.estados|length }} estados LR(0); {{ slr.conflictos|length }} conflictos.</p>
+    {% for registro in compilacion.registros %}
+    <h4>Programa: {{ 'SLR(1) válido' if registro.sintaxis_aceptada else ('no ejecutado por errores léxicos' if registro.fase == 'léxico' else 'estructura rechazada') }}</h4>
+    {% for error in registro.errores_sintacticos %}<p class="error">Línea {{ error.linea }}, columna {{ error.columna }}: {{ error.detalle }}</p>{% endfor %}
+    {% if registro.arbol %}
+    <div class="arbol-oculto" hidden>
+    <h3>Árbol sintáctico</h3><div class="arbol">{{ arbol(registro.arbol) }}</div>
+    <p class="nota">Abre o cierra cada nodo con su encabezado. Las hojas muestran los lexemas del programa ingresado. La aceptación sintáctica precede a las validaciones de códigos, rangos y referencias.</p>
+    </div>
+    {% endif %}
+    {% endfor %}
+<div id="gramatica" hidden>
+    <h4>Gramática y tabla SLR(1)</h4>
+    <p class="nota">BNF: PYC abrevia PUNTO_Y_COMA; ε es la producción vacía.</p>
+    <div class="bnf">{% for n in slr.no_terminales %}<div><code>{{ n }} → {% for izq, der in slr.producciones[1:] if izq == n %}{{ ' | ' if not loop.first else '' }}{{ der|join(' ')|replace('PUNTO_Y_COMA', 'PYC') or 'ε' }}{% endfor %}</code></div>{% endfor %}</div>
+    <details><summary>Detalles técnicos del análisis SLR(1)</summary>
+    <p>BNF: PYC abrevia PUNTO_Y_COMA. ε representa la producción vacía.</p><p>P: producciones originales</p>
+    <ol start="1" id="producciones-originales">{% for izquierda, derecha in slr.producciones[1:] %}<li><code>{{ izquierda }} → {{ derecha|join(' ') or 'ε' }}</code></li>{% endfor %}</ol>
+    <p>G = (N, T, P, S). S = {{ slr.inicial }}. N = { {{ slr.no_terminales|join(', ') }} }. T = { {{ slr.terminales|join(', ') }} }.</p>
+    <p id="produccion-aumentada">Producción aumentada (0), fuera de P: <code>{{ slr.producciones[0][0] }} → {{ slr.producciones[0][1]|join(' ') }}</code></p>
+    <p>Analizador SLR(1): {{ slr.estados|length }} estados; {{ slr.conflictos|length }} conflictos.</p>
+    <p>dN: desplazar al estado N. rN: reducir por la producción N. $: fin del programa. Conflictos SLR: {{ slr.conflictos|length }}.</p>
+    <details><summary>Tablas ACTION y GOTO</summary>
+    {% for titulo, simbolos, filas in [('ACTION', slr.terminales + ['$'], slr.acciones), ('GOTO', slr.no_terminales, slr.saltos)] %}
+    <h4>{{ titulo }}</h4><div class="tabla-contenedor"><table class="tabla-slr"><thead><tr><th>Estado</th>{% for s in simbolos %}<th>{{ 'PYC' if s == 'PUNTO_Y_COMA' else s }}</th>{% endfor %}</tr></thead><tbody>
+    {% for estado in slr.estados %}{% set i = loop.index0 %}<tr><td>I{{ i }}</td>{% for s in simbolos %}<td>{{ filas[i].get(s, '') }}</td>{% endfor %}</tr>{% endfor %}
+    </tbody></table></div>{% endfor %}</details>
+    <details><summary>FIRST y FOLLOW</summary>
+    <h3>FIRST y FOLLOW</h3>
+    <div class="tabla-contenedor"><table><thead><tr><th>No terminal</th><th>FIRST</th><th>FOLLOW</th></tr></thead><tbody>
+    {% for s in slr.no_terminales %}<tr><td>{{ s }}</td><td>{{ slr.primeros[s]|join(', ') }}</td><td>{{ slr.siguientes[s]|join(', ') }}</td></tr>{% endfor %}</tbody></table></div>
+    </details><details><summary>Ítems y transiciones LR(0)</summary>
+    <h3>Transiciones LR(0)</h3>
+    <div class="tabla-contenedor"><table><thead><tr><th>Origen</th><th>Símbolo</th><th>Destino</th></tr></thead><tbody>
+    {% for t in slr.transiciones %}<tr><td>I{{ t.origen }}</td><td>{{ t.simbolo }}</td><td>I{{ t.destino }}</td></tr>{% endfor %}</tbody></table></div>
+    {% for estado in slr.estados %}<h3>I{{ loop.index0 }}</h3><ul>{% for p, punto in estado %}{% set izquierda, derecha = slr.producciones[p] %}<li><code>{{ izquierda }} → {{ (derecha[:punto] + ['·'] + derecha[punto:])|join(' ') }}</code></li>{% endfor %}</ul>{% endfor %}
+    </details><details><summary>Derivación y traza SLR(1)</summary>
+    {% for registro in compilacion.registros %}
+    {% if registro.arbol %}
+    <h3>Derivación por la izquierda del programa completo</h3>
+    <ol>{% for paso in registro.derivacion %}<li><code>{{ paso|join(' ') }}</code></li>{% endfor %}</ol>
+    {% endif %}
+    {% if registro.traza %}<h3>Traza SLR(1) del programa completo</h3>
+    <div class="tabla-contenedor"><table><thead><tr><th>Pila de estados</th><th>Entrada</th><th>Acción</th></tr></thead><tbody>
+    {% for paso in registro.traza %}<tr><td>{{ paso.pila|join(' ') }}</td><td>{{ paso.entrada|join(' ') }}</td><td>{{ paso.accion }}</td></tr>{% endfor %}
+    </tbody></table></div>{% endif %}
+    {% endfor %}
+    </details></details>
+</div>
+</section>
