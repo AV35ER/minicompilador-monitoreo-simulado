@@ -72,7 +72,7 @@ class InterfazGeneradaTests(unittest.TestCase):
                     modelo = datos[tipo]
                     vista = panel.find('.//div[@data-tipo="' + tipo + '"]')
                     self.assertNotIn("hidden", vista.attrib)
-                    self.assertIsNotNone(vista.find('div[@class="quintupla"]'))
+                    self.assertIsNotNone(vista.find('.//div[@class="quintupla"]'))
                     detalles = vista.findall("details")
                     self.assertTrue(all("open" not in d.attrib for d in detalles if d.get("class") != "nodo-sintactico"))
                     quint = vista.find('.//div[@class="quintupla"]')
@@ -98,11 +98,13 @@ class InterfazGeneradaTests(unittest.TestCase):
                     iniciales = []
                     for arista in svg.findall('.//g[@class="edge"]'):
                         origen, destino = texto(arista.find("title")).split("->")
-                        etiqueta = arista.find("text")
-                        if etiqueta is None:
+                        etiquetas = arista.findall("text")
+                        if not etiquetas:
                             iniciales.append((origen, destino))
                         else:
-                            for simbolo in simbolos_etiqueta(texto(etiqueta), alfabeto):
+                            for etiqueta in etiquetas:
+                                self.assertEqual(len(texto(etiqueta)), 1)
+                                simbolo = " " if texto(etiqueta) == "␠" else texto(etiqueta)
                                 aristas.add((origen, simbolo, destino))
                     self.assertEqual(iniciales, [("inicio", modelo["inicial"])])
                     self.assertEqual(aristas, esperadas)
@@ -123,11 +125,17 @@ class InterfazGeneradaTests(unittest.TestCase):
                                     for destino in celda.split(", "):
                                         celdas_transiciones.add((estado, simbolo, destino))
                     self.assertEqual(celdas_transiciones, esperadas)
+                    individuales = vista.find('.//div[@class="tabla-contenedor simbolos-individuales"]/table')
+                    self.assertEqual([[texto(c) for c in fila.findall("td")] for fila in individuales.findall("tbody/tr")], [[t["origen"], "␠" if t["simbolo"] == " " else t["simbolo"], t["destino"]] for t in modelo["transiciones"]])
+                    self.assertIsNone(vista.find('details[@class="detalle-automata"]'))
+                    self.assertIsNotNone(vista.find('div[@class="quintupla"]'))
+                    self.assertIsNotNone(vista.find('div[@class="tabla-contenedor transiciones"]'))
+
 
     def test_jerarquia_salida_y_detalle_real(self):
         import clinica
-        proceso = self.pagina.find('.//section[@id="proceso-interno"]')
-        self.assertEqual([texto(n.find("h3")) for n in proceso.findall("section")], ["C.1 Análisis léxico", "C.2 Análisis sintáctico", "C.3 Análisis semántico"])
+        proceso = self.pagina.find('.//div[@id="proceso-interno"]')
+        self.assertEqual([texto(n.find("h3")) for n in proceso.findall("section")], ["2. Análisis léxico", "3. Análisis sintáctico y semántico"])
         self.assertEqual(json.loads(texto(self.pagina.find('.//pre[@id="salida-json"]'))), clinica.compilar(clinica.EJEMPLO)["salida"])
         self.assertIn("PUSH 28", texto(self.pagina.find('.//pre[@id="codigo-intermedio"]')))
         detalles = self.pagina.findall(".//details")
@@ -140,7 +148,16 @@ class InterfazGeneradaTests(unittest.TestCase):
         self.assertEqual(clinica.compilar(clinica.EJEMPLO)["salida"]["avisos"][0]["descripcion"], "Revisión técnica simulada")
         self.assertIn("Revisión técnica simulada", texto(self.pagina.find('.//pre[@id="salida-json"]')))
         sensor = self.pagina.find('.//div[@id="token-SENSOR"]')
-        self.assertIn("AFD mínimo parcial: 4 estados (sin sumidero explícito)", texto(sensor))
+        self.assertIn("AFD mínimo: 4 estados", texto(sensor))
+        exportar = self.pagina.find('.//details[@id="exportar-jflap"]')
+        self.assertNotIn("open", exportar.attrib)
+        enlaces = [n for n in self.pagina.findall(".//a") if n.get("href", "").startswith("/jflap/")]
+        self.assertEqual(len(enlaces), 33)
+        self.assertEqual(enlaces, exportar.findall(".//a"))
+        self.assertTrue(all(texto(n) == "Descargar .jff" for n in enlaces))
+        self.assertFalse(self.pagina.find('.//section[@id="analisis-lexico"]//table').findall(".//a"))
+        self.assertNotIn("sumidero", texto(self.pagina))
+
         self.assertIn("hidden", self.pagina.find('.//div[@id="gramatica"]').attrib)
         self.assertIn("hidden", self.pagina.find('.//div[@class="arbol-oculto"]').attrib)
         sintaxis = self.pagina.find('.//section[@id="analisis-sintactico"]')

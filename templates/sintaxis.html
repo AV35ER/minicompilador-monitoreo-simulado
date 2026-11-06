@@ -4,7 +4,7 @@
 {%- endmacro %}
 {% set slr = compilacion.slr %}
 <section id="analisis-sintactico">
-    <h3>C.2 Análisis sintáctico</h3>
+    <h3>3. Análisis sintáctico y semántico</h3>
     <p>{{ slr.estados|length }} estados LR(0); {{ slr.conflictos|length }} conflictos.</p>
     {% for registro in compilacion.registros %}
     <h4>Programa: {{ 'SLR(1) válido' if registro.sintaxis_aceptada else ('no ejecutado por errores léxicos' if registro.fase == 'léxico' else 'estructura rechazada') }}</h4>
@@ -54,4 +54,3 @@
     {% endfor %}
     </details></details>
 </div>
-</section>

@@ -2,6 +2,7 @@
 from functools import lru_cache
 from collections import deque
 from graphviz import Digraph, nohtml
+from xml.etree.ElementTree import Element, SubElement, tostring
 
 EXPRESIONES = {
     "SENSOR": "S[0-9][0-9]", "ACCION": "A[0-9][0-9]", "NUMERO": "[0-9]+",
@@ -20,7 +21,8 @@ def crear_directo(token):
     cantidad, finales, aristas = CONSTRUCCIONES_DIRECTAS[token]
     return {"estados": [f"q{i}" for i in range(cantidad)], "inicial": "q0",
             "finales": [f"q{i}" for i in finales], "transiciones": [
-                {"origen": f"q{a}", "simbolo": s, "destino": f"q{b}"} for a, s, b in aristas]}
+                {"origen": f"q{a}", "simbolo": c, "destino": f"q{b}"}
+                for a, s, b in aristas for c in expandir_simbolo(s)]}
 
 
 def sin_sumidero(automata, muertos):
@@ -244,7 +246,10 @@ class GeneradorAFND:
 
 
 def crear_afnd(expresion):
-    return GeneradorAFND().construir(expresion)
+    automata = GeneradorAFND().construir(expresion)
+    automata["transiciones"] = [{**t, "simbolo": c} for t in automata["transiciones"]
+                               for c in (["ε"] if t["simbolo"] == "ε" else expandir_simbolo(t["simbolo"]))]
+    return automata
 
 
 def obtener_alfabeto(automata):
@@ -445,7 +450,7 @@ def dibujar_automata(automata, titulo="", formato="svg"):
     for t in automata["transiciones"]:
         grupos.setdefault((t["origen"], t["destino"]), []).append(t["simbolo"])
     for (origen, destino), simbolos in grupos.items():
-        grafo.edge(origen, destino, label=nohtml(etiqueta_simbolos(simbolos)))
+        grafo.edge(origen, destino, label=nohtml("\n".join("␠" if s == " " else s for s in sorted(set(simbolos)))), fontsize="13")
 
     contenido = grafo.pipe(format=formato)
     if formato == "svg":
@@ -453,9 +458,9 @@ def dibujar_automata(automata, titulo="", formato="svg"):
     return contenido
 
 
-def construir_modelos(token, expresion):
-    directo = token in CONSTRUCCIONES_DIRECTAS and expresion == EXPRESIONES[token]
-    afnd = crear_directo(token) if directo else crear_afnd(expresion)
+def construir_modelos(token, expresion, literal=False):
+    directo = literal or (token in CONSTRUCCIONES_DIRECTAS and expresion == EXPRESIONES[token])
+    afnd = crear_literal(expresion) if literal else crear_directo(token) if directo else crear_afnd(expresion)
     afd = convertir_afd(afnd)
     minimo = minimizar_afd(afd)
     if directo:
@@ -529,3 +534,36 @@ def agrupar_columnas(automata, epsilon=False, tabla=None):
         clave = (simbolo == "ε", firma)
         grupos.setdefault(clave, []).append(simbolo)
     return [(etiqueta_simbolos(valores), valores) for valores in grupos.values()]
+
+
+def crear_literal(texto):
+    return {"estados": [f"q{i}" for i in range(len(texto) + 1)], "inicial": "q0",
+            "finales": [f"q{len(texto)}"], "transiciones": [
+                {"origen": f"q{i}", "simbolo": c, "destino": f"q{i+1}"} for i, c in enumerate(texto)]}
+
+
+def exportar_jff(automata):
+    """Serializa el modelo real: ε se escribe como <read/> en JFLAP."""
+    estados = automata["estados"]
+    if len(set(estados)) != len(estados) or automata["inicial"] not in estados or not set(automata["finales"]) <= set(estados):
+        raise ValueError("Estados iniciales/finales inválidos")
+    ids = {e: str(i) for i, e in enumerate(estados)}
+    raiz = Element("structure"); SubElement(raiz, "type").text = "fa"
+    contenido = SubElement(raiz, "automaton")
+    for i, e in enumerate(estados):
+        n = SubElement(contenido, "state", id=ids[e], name=e)
+        SubElement(n, "x").text = str(80 + (i % 6) * 130)
+        SubElement(n, "y").text = str(80 + (i // 6) * 130)
+        if e == automata["inicial"]: SubElement(n, "initial")
+        if e in automata["finales"]: SubElement(n, "final")
+    for t in automata["transiciones"]:
+        c = t["simbolo"]
+        if t["origen"] not in ids or t["destino"] not in ids or (c != "ε" and len(c) != 1):
+            raise ValueError("Cada transición debe consumir un símbolo o ε")
+        if c != "ε" and not (ord(c) in (9, 10, 13) or 32 <= ord(c) <= 55295 or 57344 <= ord(c) <= 65533 or 65536 <= ord(c) <= 1114111):
+            raise ValueError("Símbolo no representable en XML 1.0")
+        n = SubElement(contenido, "transition")
+        SubElement(n, "from").text = ids[t["origen"]]
+        SubElement(n, "to").text = ids[t["destino"]]
+        SubElement(n, "read").text = None if c == "ε" else c
+    return tostring(raiz, encoding="utf-8", xml_declaration=True)

@@ -1,14 +1,13 @@
     {% if analizado %}
-    {% include "salida.html" %}
-    <section id="proceso-interno">
-        <h2>C. Proceso interno</h2>
+    <div id="proceso-interno">
     <section id="analisis-lexico">
-        <h3>C.1 Análisis léxico</h3>
-        <p>Las cinco familias son seleccionables para estudiar sus autómatas. Los literales también son tokens del analizador.</p>
+        <h3>2. Análisis léxico</h3>
+        <p class="nota">Token: categoría simbólica. Lexema: texto reconocido; los nombres de categorías no forman parte del alfabeto de entrada.</p>
         <div class="tabla-contenedor"><table><thead><tr><th>Token</th><th>Descripción</th><th>Expresión regular</th><th>Ejemplos léxicos válidos / inválidos</th></tr></thead><tbody>
         {% for nombre, expresion in expresiones.items() %}<tr><td>{{ nombre }}</td><td>{{ descripciones[nombre] }}</td><td><code>{{ expresion }}</code></td><td>{{ ejemplos[nombre][0]|join(' / ') }}<br>{{ 'No como IGUAL:' if nombre == 'IGUAL' else 'No:' }} {{ ejemplos[nombre][1]|join(' / ') }}</td></tr>{% endfor %}
+        {% for lexema, nombre in literales.items() %}<tr><td>{{ nombre }}</td><td>{{ 'Operador lógico' if lexema == 'Y' else 'Separador' if lexema == ';' else 'Palabra reservada' }}</td><td><code>{{ patrones_tokens[nombre] }}</code></td><td><code>{{ lexema }}</code></td></tr>{% endfor %}
         </tbody></table></div>
-        <p class="nota">Literales: {% for lexema, nombre in literales.items() %}<code>{{ lexema }}</code> ({{ nombre }}){{ "; " if not loop.last else "." }}{% endfor %}</p>
+
         <h4>Lexemas de la entrada</h4>
 
         {% if tokens %}
@@ -30,7 +29,7 @@
                         <td>{{ t.columna }}</td>
                         <td><code>{{ t.lexema }}</code></td>
                         <td>{{ t.token }}</td>
-                        <td><code>{{ expresiones.get(t.token, t.lexema) }}</code></td>
+                        <td><code>{{ patrones_tokens[t.token] }}</code></td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -55,7 +54,7 @@
                         <td>{{ t.columna }}</td>
                         <td><code>{{ t.lexema }}</code></td>
                         <td>{{ t.token }}</td>
-                        <td><code>{{ expresiones.get(t.token, t.lexema) }}</code></td>
+                        <td><code>{{ patrones_tokens[t.token] }}</code></td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -88,7 +87,7 @@
         <h4>Expresiones regulares y autómatas</h4>
 
         <p>
-            Selecciona una familia. Un AFND directo puede ser determinista: en ese caso AFND y AFD reconocen con la misma estructura. El mínimo se calcula por particiones.
+            Selecciona un token. Cada símbolo de las flechas representa una transición individual.
         </p>
 
         <div class="selector">
@@ -118,7 +117,7 @@
                     <span class="etiqueta">
                         AFD: {{ datos.afd.estados|length }} estados
                     </span>
-                    <span class="etiqueta">AFD mínimo parcial: {{ datos.afd_minimo.estados|length }} estados (sin sumidero explícito)</span>
+                    <span class="etiqueta">AFD mínimo: {{ datos.afd_minimo.estados|length }} estados</span>
                 </p>
             </div>
 
@@ -130,10 +129,9 @@
                 {% set tabla = datos["tabla_visual_" ~ tipo] %}
                 {% set quintupla = datos["quintupla_" ~ tipo] %}
 
-                {% if tipo == "afd_minimo" %}<details class="automata-minimo" ontoggle="if (this.open) reiniciarZoom('grafico-{{ nombre }}-afd_minimo')"><summary>Consultar AFD mínimo parcial (sin sumidero explícito)</summary>{% endif %}
+                {% if tipo == "afd_minimo" %}<details class="automata-minimo" ontoggle="if (this.open) reiniciarZoom('grafico-{{ nombre }}-afd_minimo')"><summary>AFD mínimo</summary>{% endif %}
                 <div class="panel panel-automata" data-tipo="{{ tipo }}">
-                    <h3>{{ "AFD mínimo parcial" if tipo == "afd_minimo" else tipo|upper }} — {{ nombre }}</h3>
-                    <p>M = (Q, Σ, δ, q₀, F)</p>{% if tipo != "afnd" %}<p class="nota">AFD parcial: δ: Q × Σ ⇀ Q. Las transiciones no definidas rechazan; se omite el sumidero implícito.</p>{% endif %}
+                    <h3>{{ "AFD mínimo" if tipo == "afd_minimo" else tipo|upper }}</h3>
 
                     <div class="controles">
                         <button type="button"
@@ -158,6 +156,7 @@
                         </div>
                     </div>
 
+                    <p>M = (Q, Σ, δ, q₀, F)</p>
                     <h3>Quíntupla</h3>
 
                     <div class="quintupla">
@@ -187,7 +186,7 @@
                         <table>
                             <thead>
                                 <tr>
-                                    <th>{{ "AFD mínimo parcial" if tipo == "afd_minimo" else "AFD" }}</th>
+                                    <th>{{ "AFD mínimo" if tipo == "afd_minimo" else "AFD" }}</th>
                                     <th>{{ "Estados AFD originales" if tipo == "afd_minimo" else "Conjunto de estados AFND" }}</th>
                                 </tr>
                             </thead>
@@ -195,7 +194,7 @@
                                 {% for estado, conjunto in automata.equivalencias.items() %}
                                 <tr>
                                     <td>{{ estado }}</td>
-                                    <td>{{ conjunto|join(", ") if conjunto else "∅ (sumidero)" }}</td>
+                                    <td>{{ conjunto|join(", ") if conjunto else "∅" }}</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -234,20 +233,27 @@
                         </table>
                     </div>
 
-                    <p class="nota">
-                        → Inicial. * Aceptación. ∅ Sin transición. ␠ Espacio.
-                        Los símbolos agrupados comparten destinos. Una transición inexistente rechaza la cadena; se omite el sumidero implícito.
-                    </p>
+                    <h4>Transiciones por símbolo individual</h4>
+                    <div class="tabla-contenedor simbolos-individuales"><table><thead><tr><th>Origen</th><th>Símbolo</th><th>Destino</th></tr></thead><tbody>
+                    {% for t in automata.transiciones %}<tr><td>{{ t.origen }}</td><td><code>{{ '␠' if t.simbolo == ' ' else t.simbolo }}</code></td><td>{{ t.destino }}</td></tr>{% endfor %}
+                    </tbody></table></div>
+                    <p class="nota">→ Inicial. * Aceptación. ∅ Sin transición. ␠ Espacio. Cada fila consume un carácter o ε.</p>
                 </div>
                 {% if tipo == "afd_minimo" %}</details>{% endif %}
             {% endfor %}
             </div>
         </div>
         {% endfor %}
+        <details id="exportar-jflap"><summary>Exportar a JFLAP</summary>
+            <div class="tabla-contenedor"><table><thead><tr><th>Token</th><th>AFND</th><th>AFD</th><th>AFD mínimo</th></tr></thead><tbody>
+            {% for token in patrones_tokens %}<tr><td>{{ token }}</td>{% for tipo in ['afnd', 'afd', 'afd_minimo'] %}<td><a href="/jflap/{{ token }}-{{ tipo }}.jff" download>Descargar .jff</a></td>{% endfor %}</tr>{% endfor %}
+            </tbody></table></div>
+        </details>
     </div>
     {% endif %}
     </section>
     {% include "sintaxis.html" %}
     {% include "semantica.html" %}
-    </section>
+    </div>
+    {% include "salida.html" %}
     {% endif %}

@@ -7,6 +7,7 @@ from slr import generar_slr, analizar_sintaxis
 EJEMPLO = "CARGAR S01 = 28;\nCARGAR S02 = 15;\nSI S01 > 26 Y S02 < 20 ENTONCES AVISAR A01;"
 LITERALES = {s: s for s in ["CARGAR", "SI", "Y", "ENTONCES", "AVISAR"]}
 LITERALES[";"] = "PUNTO_Y_COMA"
+PATRONES_TOKENS = {**EXPRESIONES, **{nombre: re.escape(lexema) for lexema, nombre in LITERALES.items()}}
 SENSORES = {"S01": {"descripcion": "Temperatura simulada del equipo", "minimo": 0, "maximo": 50},
             "S02": {"descripcion": "Batería simulada del equipo (%)", "minimo": 0, "maximo": 100}}
 ACCIONES = {"A01": "Revisión técnica simulada", "A02": "Mantenimiento preventivo simulado"}
@@ -46,8 +47,7 @@ def analizar(texto):
                 while pos < len(linea) and not linea[pos].isspace() and linea[pos] not in ";=<>!":
                     pos += 1
             lexema = linea[inicio:pos]
-            candidatos = [n for n, patron in EXPRESIONES.items() if re.fullmatch(patron, lexema)]
-            nombre = LITERALES.get(lexema) or (candidatos[0] if candidatos else None)
+            nombre = next((n for n, patron in PATRONES_TOKENS.items() if re.fullmatch(patron, lexema)), None)
             elemento = {"linea": numero, "columna": inicio + 1, "lexema": lexema}
             if nombre:
                 tokens.append({**elemento, "token": nombre})

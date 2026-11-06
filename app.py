@@ -1,13 +1,14 @@
 
 import os
 from graphviz import ExecutableNotFound, CalledProcessError
-from flask import Flask, abort, render_template, request
+from flask import Flask, abort, render_template, request, Response
 from automatas import EXPRESIONES, EJEMPLOS, generar_todos, generar_tabla, agrupar_columnas, etiqueta_simbolos
 
-from clinica import EJEMPLO, GRAMATICA, DESCRIPCIONES, analizar, compilar, tabla_slr, SENSORES, ACCIONES, LITERALES
+from clinica import EJEMPLO, GRAMATICA, DESCRIPCIONES, analizar, compilar, tabla_slr, SENSORES, ACCIONES, LITERALES, PATRONES_TOKENS
 
 app = Flask(__name__)
 app.json.ensure_ascii = False
+app.jinja_env.globals["patrones_tokens"] = PATRONES_TOKENS
 app.jinja_env.filters["simbolos"] = etiqueta_simbolos
 LIMITE_ENTRADA = 1024 * 1024
 app.config.update(
@@ -145,6 +146,28 @@ def archivo_grande(error):
     if request.path == "/api/analizar":
         return {"mensaje": "La entrada supera el máximo de 1 MiB."}, 413
     return "El archivo supera el máximo de 1 MiB.", 413
+
+
+
+
+def modelos_jflap(token):
+    from automatas import construir_modelos
+    if token in EXPRESIONES:
+        return construir_modelos(token, EXPRESIONES[token])
+    literal = next((s for s, n in LITERALES.items() if n == token), None)
+    if literal is None: raise KeyError(token)
+    return construir_modelos(token, literal, literal=True)
+
+
+@app.get("/jflap/<token>-<tipo>.jff")
+def descargar_jflap(token, tipo):
+    from automatas import exportar_jff
+    tipos = ("afnd", "afd", "afd_minimo")
+    if tipo not in tipos: abort(404)
+    try: modelo = modelos_jflap(token)[tipos.index(tipo)]
+    except KeyError: abort(404)
+    return Response(exportar_jff(modelo), mimetype="application/xml", headers={
+        "Content-Disposition": f'attachment; filename="{token}-{tipo}.jff"'})
 
 
 if __name__ == "__main__":

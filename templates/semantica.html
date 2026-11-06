@@ -1,5 +1,5 @@
-<section id="analisis-semantico">
-    <h3>C.3 Análisis semántico</h3>
+<div id="analisis-semantico">
+    <h4>Validación semántica</h4>
     <p>Comprueba códigos, rangos enteros, cargas únicas y referencias previas. Una condición falsa no es un error.</p>
     {% for registro in compilacion.registros %}
     {% if registro.atributos %}
@@ -18,4 +18,5 @@
     <div class="tabla-contenedor"><table><thead><tr><th>Regla</th><th>Línea</th><th>Índices del código (desde 0)</th><th>Etiqueta de salida</th></tr></thead><tbody>
     {% for c in compilacion.correspondencias %}<tr><td>{{ c.regla }}</td><td>{{ c.linea }}</td><td>{{ c.inicio }}–{{ c.fin }}</td><td>{{ c.etiqueta }}</td></tr>{% endfor %}
     </tbody></table></div>{% endif %}
+</div>
 </section>

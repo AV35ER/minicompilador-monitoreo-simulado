@@ -20,7 +20,7 @@
         }
 
         main {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 24px auto;
             padding: 0 20px 40px;
         }
@@ -30,7 +30,7 @@
         }
 
         h1 {
-            font-size: 24px;
+            font-size: 21px;
             margin: 5px 0;
         }
 
@@ -56,8 +56,8 @@
 
         section {
             border-top: 1px solid #ddd;
-            padding-top: 18px;
-            margin-top: 22px;
+            padding-top: 12px;
+            margin-top: 16px;
         }
 
         .nota {
@@ -84,7 +84,7 @@
 
         th, td {
             border-bottom: 1px solid #ddd;
-            padding: 10px;
+            padding: 7px;
             white-space: normal;
             overflow-wrap: anywhere;
             vertical-align: top;
@@ -276,7 +276,7 @@
             }
 
             h1 {
-                font-size: 22px;
+                font-size: 20px;
             }
 
             .panel {
@@ -315,16 +315,16 @@
 <main>
     <header>
         <div class="subtitulo">Monitoreo simulado de equipos / Teoría de la Computación</div>
-        <h1>Minicompilador clínico</h1>
+        <h1>Desarrollo de un minicompilador para el monitoreo simulado de equipos mediante análisis léxico y sintáctico</h1>
     </header>
 
-    <p>Traduce instrucciones codificadas a una máquina de pila y genera avisos operativos simulados. No controla equipos reales ni procesa datos personales.</p>
+    <p>Interpreta CARGAR y reglas SI…Y…ENTONCES AVISAR para simular equipos médicos: S01 es temperatura ficticia y S02 batería (%); A01 avisa de revisión técnica y A02 de mantenimiento preventivo. No se conecta a equipos reales.</p>
 
     <section>
-        <h2>A. Entrada del programa</h2>
-        <p>Escribe cargas y después reglas SI. Cada instrucción termina con <code>;</code>. Los códigos distinguen mayúsculas y minúsculas.</p>
+        <h2>1. Minicompilador</h2>
+        <p>Escribe al menos una carga y una regla, en mayúsculas y terminadas en <code>;</code>.</p>
         <p><code>CARGAR SENSOR = NUMERO;</code><br><code>SI SENSOR COMPARADOR NUMERO [Y SENSOR COMPARADOR NUMERO ...] ENTONCES AVISAR ACCION;</code></p>
-        <p class="nota">Se exige al menos una carga y una regla. Un error rechaza el programa completo. Rangos académicos ficticios, sin significado médico real.</p>
+        <p class="nota">Un error rechaza el programa completo. Los rangos son académicos.</p>
         <form method="POST" enctype="multipart/form-data">
             <label for="texto"><strong>Texto de entrada</strong></label>
 

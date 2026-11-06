@@ -272,13 +272,13 @@ test("Presentación progresiva conserva IR dinámico, errores y todos los lexema
     assert.match(html, /Derivación por la izquierda del programa completo/);
     assert.match(html, /Traza SLR\(1\) del programa completo/);
     assert.match(html, /Revisión técnica simulada/);
-    assert.match(html, /AFD mínimo parcial: 4 estados \(sin sumidero explícito\)/);
+    assert.match(html, /AFD mínimo: 4 estados/);
     assert.match(html, /1 aviso;/); assert.doesNotMatch(html, /1 avisos/);
     assert.match(html, /<details><summary>Ver código intermedio \(14 instrucciones\)<\/summary>/);
     assert.match(html, /<details><summary>Ver todos los lexemas \(22\)<\/summary>/);
     assert.match(html, /<details><summary>Ver comprobaciones semánticas<\/summary>/);
     assert.equal((html.match(/class="tabla-slr"/g)||[]).length, 2);
-    assert.match(html, /AFD parcial: δ: Q × Σ ⇀ Q/);
+    assert.doesNotMatch(html, /sumidero/);
     const ejemplo = t.entrada.texto;
     t.entrada.texto = ejemplo + "\nSI S01 > 0 ENTONCES AVISAR A02;";
     await compilar(t); html = t.resultados.innerHTML;
@@ -288,4 +288,42 @@ test("Presentación progresiva conserva IR dinámico, errores y todos los lexema
     t.entrada.texto = ejemplo.replace("28", "99"); await compilar(t);
     html = t.resultados.innerHTML;
     assert.match(html, /Error semántico/); assert.doesNotMatch(html, /id="salida-json"/);
+});
+
+
+test("Catálogo único y regex reales de los once tokens; exportaciones accesibles", async () => {
+    const t = entorno(); await compilar(t);
+    const html = t.resultados.innerHTML;
+    const catalogo = html.slice(html.indexOf("<table"),html.indexOf("</table>")+8);
+    const nombres = [...catalogo.matchAll(/<tr><td>([^<]+)<\/td>/g)].map(m=>m[1]);
+    assert.equal(nombres.length,11); assert.equal(new Set(nombres).size,11);
+    for (const token of Object.keys(config.patrones_tokens)) assert.ok(nombres.includes(token));
+    const resultado = clinica.compilar(t.entrada.texto,config);
+    assert.equal(resultado.tokens.length,22);
+    for (const t of resultado.tokens) assert.ok(new RegExp("^(?:"+config.patrones_tokens[t.token]+")$").test(t.lexema));
+    assert.match(html,/href="\/jflap\/CARGAR-afnd.jff"/);
+    assert.match(html,/href="\/jflap\/SENSOR-afd_minimo.jff"/);
+    for (const d of Object.values(automatas)) for (const tipo of ["afnd","afd","afd_minimo"])
+        for (const arista of d[tipo].transiciones) assert.ok(arista.simbolo === "ε" || [...arista.simbolo].length === 1);
+    assert.match(html,/<div class="arbol-oculto" hidden>/);
+    assert.match(html,/<div id="gramatica" hidden>/);
+    assert.ok(html.indexOf("2. Análisis léxico")<html.indexOf("3. Análisis sintáctico y semántico"));
+    assert.ok(html.indexOf("3. Análisis sintáctico y semántico")<html.indexOf("4. Resultado"));
+});
+
+
+test("Etiquetas verticales conservan letras, espacio y epsilon individuales", async () => {
+    const simbolos = ["a", "b", "c", " ", "\u03b5"];
+    const modelo = {estados: ["q0", "q1"], inicial: "q0", finales: ["q1"],
+        transiciones: simbolos.map(simbolo => ({origen: "q0", destino: "q1", simbolo}))};
+    const svg = vistas.dibujar(modelo, "prueba");
+    const lineas = [...svg.matchAll(/<tspan x="([^"]+)" y="([^"]+)">([^<]+)<\/tspan>/g)];
+    assert.deepEqual(lineas.map(m => m[3]), ["\u2420", "a", "b", "c", "\u03b5"]);
+    assert.equal(new Set(lineas.map(m => m[1])).size, 1);
+    for (let i = 1; i < lineas.length; i++) assert.equal(+lineas[i][2] - +lineas[i-1][2], 15);
+    assert.equal(modelo.transiciones.length, simbolos.length);
+    const t = entorno(); await compilar(t);
+    const html = t.resultados.innerHTML;
+    assert.ok(!html.includes("Consultar AFD"));
+    assert.equal((html.match(/<summary>AFD m\u00ednimo<\/summary>/g) || []).length, 5);
 });

@@ -105,7 +105,7 @@
             return unir(partes);
         }
         const [inicial, fin] = construir(analizarRegex(expresion));
-        return {estados, inicial, finales: [fin], transiciones};
+        return {estados, inicial, finales: [fin], transiciones: transiciones.flatMap(t => (t.simbolo === "ε" ? ["ε"] : expandir(t.simbolo)).map(c => ({...t, simbolo: c})))};
     }
 
     const alfabeto = automata => ordenar(automata.transiciones.flatMap(t => expandir(t.simbolo)));
@@ -201,7 +201,7 @@
         const [cantidad, finales, aristas] = definicion;
         return {estados: Array.from({length: cantidad}, (_, i) => "q" + i), inicial: "q0",
             finales: finales.map(i => "q" + i),
-            transiciones: aristas.map(([a, simbolo, b]) => ({origen: "q" + a, simbolo, destino: "q" + b}))};
+            transiciones: aristas.flatMap(([a, simbolo, b]) => expandir(simbolo).map(c => ({origen: "q" + a, simbolo: c, destino: "q" + b})))};
     }
     function sinSumidero(a, muertos) {
         return {...a, estados: a.estados.filter(e => !muertos.has(e)), finales: a.finales.filter(e => !muertos.has(e)),

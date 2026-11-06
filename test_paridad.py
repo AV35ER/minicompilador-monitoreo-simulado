@@ -109,6 +109,14 @@ class ParidadTests(unittest.TestCase):
         for d in pagina.findall(".//details"):
             if d.get("class") != "nodo-sintactico":
                 self.assertNotIn("open", d.attrib)
+        exportar = pagina.find('.//details[@id="exportar-jflap"]')
+        self.assertNotIn("open", exportar.attrib)
+        enlaces = [n for n in pagina.findall(".//a") if n.get("href", "").startswith("/jflap/")]
+        self.assertEqual(len(enlaces),33)
+        self.assertEqual(enlaces,exportar.findall(".//a"))
+        self.assertTrue(all(texto(n) == "Descargar .jff" for n in enlaces))
+        self.assertFalse(pagina.find('.//section[@id="analisis-lexico"]//table').findall(".//a"))
+        self.assertNotIn("sumidero",texto(pagina))
         graficos = re.findall(r"<svg\b.*?</svg>", datos["html"], re.DOTALL)
         self.assertEqual(len(graficos), 15)
         for grafico in graficos:
@@ -127,7 +135,7 @@ class ParidadTests(unittest.TestCase):
                     panel = pagina.find(f'.//div[@id="token-{nombre}"]')
                     vista = panel.find(f'.//div[@data-tipo="{tipo}"]')
                     self.assertNotIn("hidden", vista.attrib)
-                    self.assertIsNotNone(vista.find('div[@class="quintupla"]'))
+                    self.assertIsNotNone(vista.find('.//div[@class="quintupla"]'))
                     detalles = vista.findall("details")
                     self.assertTrue(all("open" not in d.attrib for d in detalles))
                     quint = [texto(n) for n in vista.find('.//div[@class="quintupla"]').findall("div")]
@@ -140,6 +148,11 @@ class ParidadTests(unittest.TestCase):
                     self.assertEqual(len(filas), len(visual["filas"]))
                     for fila, esperada in zip(filas, visual["filas"]):
                         self.assertEqual([texto(n) for n in fila.findall("td")][1:], [esperada["destinos"][s] for s in visual["alfabeto"]])
+                    individuales = vista.find('.//div[@class="simbolos-individuales"]//table')
+                    self.assertEqual([[texto(c) for c in fila.findall("td")] for fila in individuales.findall("tbody/tr")], [[t["origen"], "␠" if t["simbolo"] == " " else t["simbolo"], t["destino"]] for t in modelo["transiciones"]])
+                    self.assertIsNone(vista.find('details[@class="detalle-automata"]'))
+                    self.assertIsNotNone(vista.find('div[@class="quintupla"]'))
+                    self.assertIsNotNone(vista.find('div[@class="transiciones"]'))
                     svg = vista.find(".//svg")
                     # Además de leer HTML, el SVG debe ser XML válido.
                     ElementTree.fromstring(ElementTree.tostring(svg, encoding="unicode"))
@@ -150,7 +163,12 @@ class ParidadTests(unittest.TestCase):
                     aristas = []
                     for arista in svg.findall('.//g[@class="arista"]'):
                         simbolos = json.loads(arista.get("data-simbolos"))
-                        self.assertEqual(texto(arista.find("text")), automatas.etiqueta_simbolos(simbolos))
+                        rotulos = arista.findall("text/tspan")
+                        self.assertEqual([texto(n) for n in rotulos], ["␠" if s == " " else s for s in sorted(set(simbolos))])
+                        self.assertTrue(all(len(texto(n)) == 1 for n in rotulos))
+                        ys = [float(n.get("y")) for n in rotulos]
+                        self.assertEqual(ys, sorted(set(ys)))
+                        self.assertTrue(all(0 < y < float(svg.get("height")) for y in ys))
                         self.assertTrue(arista.find("path").get("d"))
                         aristas.extend((arista.get("data-origen"), s, arista.get("data-destino")) for s in simbolos)
                     self.assertCountEqual(aristas, [(t["origen"], t["simbolo"], t["destino"]) for t in modelo["transiciones"]])
@@ -176,6 +194,12 @@ class ParidadTests(unittest.TestCase):
             hilo = Thread(target=servidor.serve_forever, daemon=True)
             hilo.start()
             try:
+                exportaciones = sorted((destino / "netlify-public/jflap").glob("*.jff"))
+                self.assertEqual(len(exportaciones), 33)
+                for archivo in exportaciones:
+                    with urlopen(f"http://127.0.0.1:{servidor.server_port}/jflap/{archivo.name}", timeout=5) as respuesta:
+                        self.assertEqual(respuesta.status, 200)
+                        self.assertEqual(respuesta.read(), archivo.read_bytes())
                 for recurso in ("index.html", "motor.js", "vistas.js", "slr.js", "simulador.js", "clinica.js", "cliente.js"):
                     with urlopen(f"http://127.0.0.1:{servidor.server_port}/{recurso}", timeout=5) as respuesta:
                         self.assertEqual(respuesta.status, 200)

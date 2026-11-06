@@ -1,5 +1,5 @@
 <section>
-    <h2>B. Representación de salida</h2>
+    <h2>4. Resultado</h2>
     <p class="{{ 'correcto' if compilacion.aceptado else 'error' }}">{{ 'Programa aceptado.' if compilacion.aceptado else 'Programa rechazado. No se traduce ni ejecuta parcialmente.' }}</p>
     {% for error in compilacion.errores %}<p class="error">Error léxico, línea {{ error.linea }}, columna {{ error.columna }}: {{ error.lexema }}. {{ error.detalle }}</p>{% endfor %}
     {% for registro in compilacion.registros %}
@@ -9,7 +9,6 @@
     {% if compilacion.aceptado %}
     <h3>Resultado de la simulación</h3><p>{{ compilacion.simulacion.avisos|length }} {{ 'aviso' if compilacion.simulacion.avisos|length == 1 else 'avisos' }}; {{ compilacion.simulacion.pasos }} instrucciones intermedias ejecutadas.</p>
     {% for aviso in compilacion.simulacion.avisos %}<p>{{ aviso.codigo }}: {{ aviso.descripcion }}</p>{% else %}<p>Las condiciones no generan avisos. El programa sigue siendo válido.</p>{% endfor %}
-    <p>El simulador ejecuta el código intermedio. El JSON contiene los avisos obtenidos.</p>
     <pre id="salida-json">{{ compilacion.salida|tojson(indent=2) }}</pre>
 <details><summary>Ver código intermedio ({{ compilacion.codigo|length }} instrucciones)</summary><pre id="codigo-intermedio">{% for c in compilacion.codigo %}{{ c.op }}{% if c.arg is defined %} {{ c.arg }}{% endif %}
 {% endfor %}</pre>

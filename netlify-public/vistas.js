@@ -2,9 +2,9 @@
     "use strict";
     const motor = typeof module !== "undefined" && module.exports ? require("./motor.js") : global.MotorAutomatas;
     const e = motor.escapar;
-    const tipos = {afnd: "AFND", afd: "AFD", afd_minimo: "AFD mínimo parcial"};
+    const tipos = {afnd: "AFND", afd: "AFD", afd_minimo: "AFD mínimo"};
     const celdas = (valores, etiqueta = "td") => valores.map(v => `<${etiqueta}>${e(v)}</${etiqueta}>`).join("");
-    const tablaHTML = (cabecera, filas, clase = "") => `<div class="tabla-contenedor"><table class="${clase}"><thead><tr>${celdas(cabecera, "th")}</tr></thead><tbody>${filas.map(f => `<tr>${celdas(f)}</tr>`).join("")}</tbody></table></div>`;
+    const tablaHTML = (cabecera, filas, clase = "", extras = "") => `<div class="tabla-contenedor"><table class="${clase}"><thead><tr>${celdas(cabecera, "th")}</tr></thead><tbody>${filas.map(f => `<tr>${celdas(f)}</tr>`).join("")}${extras}</tbody></table></div>`;
 
     function dibujar(a, id) {
         // Capas por distancia desde el inicio; se conservan todas las aristas.
@@ -20,15 +20,18 @@
             if (!capas.has(nivel)) capas.set(nivel, []);
             capas.get(nivel).push(estado);
         }
-        const alto = Math.max(260, Math.max(...[...capas.values()].map(g => g.length)) * 150 + 120);
-        const ancho = Math.max(360, capas.size * 190 + 80), puntos = new Map();
-        for (const [nivel, grupo] of capas) grupo.forEach((estado, i) => puntos.set(estado, [80 + nivel * 190, (i + 1) * alto / (grupo.length + 1)]));
         const grupos = new Map();
         for (const t of a.transiciones) {
             const clave = JSON.stringify([t.origen, t.destino]);
             if (!grupos.has(clave)) grupos.set(clave, []);
             grupos.get(clave).push(t.simbolo);
         }
+        const lineas = Math.max(1, ...[...grupos.values()].map(s => new Set(s).size));
+        const margen = lineas * 15 + 100, paso = Math.max(150, lineas * 15 + 100);
+        const filas = Math.max(...[...capas.values()].map(g => g.length));
+        const alto = margen + (filas - 1) * paso + 100;
+        const ancho = Math.max(360, (capas.size - 1) * 130 + 160), puntos = new Map();
+        for (const [nivel, grupo] of capas) grupo.forEach((estado, i) => puntos.set(estado, [80 + nivel * 130, margen + (i + (filas - grupo.length) / 2) * paso]));
         let svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${ancho} ${alto}" width="${ancho}" height="${alto}" role="img" aria-label="Autómata ${e(id)}"><defs><marker id="flecha-${e(id)}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" fill="#444"/></marker></defs>`;
         const flecha = `fill="none" stroke="#444" stroke-width="1.2" marker-end="url(#flecha-${e(id)})"`;
         const [ix, iy] = puntos.get(a.inicial);
@@ -47,8 +50,10 @@
                 camino = `M${x1 + (cx - x1) / d1 * 25} ${y1 + (cy - y1) / d1 * 25} Q${cx} ${cy} ${x2 + (cx - x2) / d2 * 25} ${y2 + (cy - y2) / d2 * 25}`;
                 tx = (x1 + 2 * cx + x2) / 4; ty = (y1 + 2 * cy + y2) / 4 - 8;
             }
-            const etiqueta = motor.etiqueta(simbolos);
-            svg += `<g class="arista" data-origen="${e(origen)}" data-destino="${e(destino)}" data-simbolos="${e(JSON.stringify(simbolos))}"><title>${e(origen)} → ${e(destino)}: ${e(etiqueta)}</title><path d="${camino}" ${flecha}/><text x="${tx}" y="${ty}" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" stroke="white" stroke-width="4" paint-order="stroke" fill="#222">${e(etiqueta)}</text></g>`;
+            const individuales = [...new Set(simbolos)].sort().map(s => s === " " ? "␠" : s);
+            const etiqueta = individuales.join("\n");
+            const rotulo = individuales.map((s, i) => `<tspan x="${tx}" y="${ty - (individuales.length - 1 - i) * 15}">${e(s)}</tspan>`).join("");
+            svg += `<g class="arista" data-origen="${e(origen)}" data-destino="${e(destino)}" data-simbolos="${e(JSON.stringify(simbolos))}"><title>${e(origen)} → ${e(destino)}: ${e(etiqueta)}</title><path d="${camino}" ${flecha}/><text x="${tx}" y="${ty}" text-anchor="middle" font-family="Arial, sans-serif" font-size="13" stroke="white" stroke-width="4" paint-order="stroke" fill="#222">${rotulo}</text></g>`;
         }
         for (const estado of a.estados) {
             const [x, y] = puntos.get(estado), final = a.finales.includes(estado);
@@ -60,29 +65,29 @@
     function panelAutomata(nombre, tipo, datos) {
         const a = datos[tipo], q = datos["quintupla_" + tipo], tabla = datos["tabla_visual_" + tipo];
         const id = "grafico-" + nombre + "-" + tipo;
-        let html = `<div class="panel panel-automata" data-tipo="${tipo}" ><h3>${tipos[tipo]} — ${e(nombre)}</h3><p>M = (Q, Σ, δ, q₀, F)</p>${tipo === "afnd" ? "" : '<p class="nota">AFD parcial: δ: Q × Σ ⇀ Q. Las transiciones no definidas rechazan; se omite el sumidero implícito.</p>'}<div class="controles"><button type="button" onclick="cambiarZoom('${id}', 1.25)">Acercar +</button><button type="button" onclick="cambiarZoom('${id}', 0.8)">Alejar −</button><button type="button" onclick="reiniciarZoom('${id}')">Restablecer</button></div><div class="grafico" id="${id}" tabindex="0" role="region" aria-label="Gráfico ${tipos[tipo]} de ${e(nombre)}; desplazamiento y zoom disponibles">${dibujar(a, id)}</div><h3>Quíntupla</h3><div class="quintupla"><strong>Q</strong><div>${e(q.Q.join(", "))}</div><strong>Σ</strong><div>${e(motor.etiqueta(q.Sigma))}</div><strong>δ</strong><div>Ver tabla de transiciones.</div><strong>q₀</strong><div>${e(q.q0)}</div><strong>F</strong><div>${e(q.F.join(", "))}</div></div>`;
+        let html = `<div class="panel panel-automata" data-tipo="${tipo}" ><h3>${tipos[tipo]}</h3><div class="controles"><button type="button" onclick="cambiarZoom('${id}', 1.25)">Acercar +</button><button type="button" onclick="cambiarZoom('${id}', 0.8)">Alejar −</button><button type="button" onclick="reiniciarZoom('${id}')">Restablecer</button></div><div class="grafico" id="${id}" tabindex="0" role="region" aria-label="Gráfico ${tipos[tipo]} de ${e(nombre)}; desplazamiento y zoom disponibles">${dibujar(a, id)}</div><p>M = (Q, Σ, δ, q₀, F)</p><h3>Quíntupla</h3><div class="quintupla"><strong>Q</strong><div>${e(q.Q.join(", "))}</div><strong>Σ</strong><div>${e(motor.etiqueta(q.Sigma))}</div><strong>δ</strong><div>Ver tabla de transiciones.</div><strong>q₀</strong><div>${e(q.q0)}</div><strong>F</strong><div>${e(q.F.join(", "))}</div></div>`;
         if (tipo !== "afnd") {
             html += `<details><summary>Correspondencia de estados</summary><h3>${tipo === "afd" ? "Estados equivalentes del AFND" : "Estados del AFD agrupados"}</h3>`;
-            html += tablaHTML([tipos[tipo], tipo === "afd" ? "Conjunto de estados AFND" : "Estados AFD originales"], Object.entries(a.equivalencias).map(([estado, conjunto]) => [estado, conjunto.join(", ") || "∅ (sumidero)"]));
+            html += tablaHTML([tipos[tipo], tipo === "afd" ? "Conjunto de estados AFND" : "Estados AFD originales"], Object.entries(a.equivalencias).map(([estado, conjunto]) => [estado, conjunto.join(", ") || "∅"]));
             html += "</details>";
         }
-        html += `<h3>Tabla de transiciones</h3><div class="transiciones">${tablaHTML(["Estado", ...tabla.alfabeto], tabla.filas.map(f => [(f.inicial ? "→" : "") + (f.final ? "*" : "") + f.estado, ...tabla.alfabeto.map(s => f.destinos[s])]))}</div><p class="nota">→ Inicial. * Aceptación. ∅ Sin transición. ␠ Espacio. Los símbolos agrupados comparten destinos. Una transición inexistente rechaza la cadena; se omite el sumidero implícito.</p></div>`;
+        html += `<h3>Tabla de transiciones</h3><div class="transiciones">${tablaHTML(["Estado", ...tabla.alfabeto], tabla.filas.map(f => [(f.inicial ? "→" : "") + (f.final ? "*" : "") + f.estado, ...tabla.alfabeto.map(s => f.destinos[s])]))}</div><h4>Transiciones por símbolo individual</h4><div class="simbolos-individuales">${tablaHTML(["Origen", "Símbolo", "Destino"], a.transiciones.map(t => [t.origen, t.simbolo === " " ? "␠" : t.simbolo, t.destino]))}</div><p class="nota">→ Inicial. * Aceptación. ∅ Sin transición. ␠ Espacio. Cada fila consume un carácter o ε.</p></div>`;
         return html;
     }
     function renderizarSalida(r) {
-        let html=`<section><h2>B. Representación de salida</h2><p class="${r.aceptado?"correcto":"error"}">${r.aceptado?"Programa aceptado.":"Programa rechazado. No se traduce ni ejecuta parcialmente."}</p>`;
+        let html=`<section><h2>4. Resultado</h2><p class="${r.aceptado?"correcto":"error"}">${r.aceptado?"Programa aceptado.":"Programa rechazado. No se traduce ni ejecuta parcialmente."}</p>`;
         const mostrar=(error,fase)=>`<p class="error">Error ${fase}, línea ${error.linea}, columna ${error.columna}: ${error.lexema===undefined?"":e(error.lexema)+". "}${e(error.detalle)}</p>`;
         html+=r.errores.map(error=>mostrar(error,"léxico")).join("");
         for(const registro of r.registros){html+=registro.errores_sintacticos.map(error=>mostrar(error,"sintáctico")).join("");html+=registro.errores_semanticos.map(error=>mostrar(error,"semántico")).join("");}
         if(r.aceptado) {
             html+=`<h3>Resultado de la simulación</h3><p>${r.simulacion.avisos.length} ${r.simulacion.avisos.length === 1 ? "aviso" : "avisos"}; ${r.simulacion.pasos} instrucciones intermedias ejecutadas.</p>`;
             html+=r.simulacion.avisos.length?r.simulacion.avisos.map(a=>`<p>${e(a.codigo)}: ${e(a.descripcion)}</p>`).join(""):"<p>Las condiciones no generan avisos. El programa sigue siendo válido.</p>";
-            html+=`<p>El simulador ejecuta el código intermedio. El JSON contiene los avisos obtenidos.</p><pre id="salida-json">${e(JSON.stringify(r.salida,null,2))}</pre><details><summary>Ver código intermedio (${r.codigo.length} instrucciones)</summary><pre id="codigo-intermedio">${e(r.codigo.map(c=>c.op+(c.arg===undefined?"":" "+c.arg)).join("\n"))}</pre></details>`;
+            html+=`<pre id="salida-json">${e(JSON.stringify(r.salida,null,2))}</pre><details><summary>Ver código intermedio (${r.codigo.length} instrucciones)</summary><pre id="codigo-intermedio">${e(r.codigo.map(c=>c.op+(c.arg===undefined?"":" "+c.arg)).join("\n"))}</pre></details>`;
         } else html+="<p>Sin código intermedio, simulación ni JSON de éxito.</p>";
         return html+'<button type="button" onclick="window.print()">Imprimir informe / guardar PDF</button></section>';
     }
     function renderizarSemantica(resultado) {
-        let html='<section id="analisis-semantico"><h3>C.3 Análisis semántico</h3><p>Comprueba códigos, rangos enteros, cargas únicas y referencias previas. Una condición falsa no es un error.</p>';
+        let html='<div id="analisis-semantico"><h4>Validación semántica</h4><p>Comprueba códigos, rangos enteros, cargas únicas y referencias previas. Una condición falsa no es un error.</p>';
         for(const r of resultado.registros) {
             if(r.atributos.length) {
                 html+=`<p>${r.atributos.filter(a=>a.valido).length} de ${r.atributos.length} comprobaciones válidas; ${Object.keys(resultado.simulacion?.memoria || {}).length} símbolos cargados. Resultado: ${r.errores_semanticos.length ? "rechazado" : "válido"}.</p>`;
@@ -95,7 +100,7 @@
             html+=r.errores_semanticos.map(error=>`<p class="error">Línea ${error.linea}, columna ${error.columna}: ${e(error.detalle)}</p>`).join("");
         }
         if(resultado.correspondencias.length)html+='<h4>Correspondencia entre reglas y traducción</h4>'+tablaHTML(["Regla","Línea","Índices del código (desde 0)","Etiqueta de salida"],resultado.correspondencias.map(c=>[c.regla,c.linea,c.inicio+"–"+c.fin,c.etiqueta]));
-        return html+"</section>";
+        return html+"</div></section>";
     }
     function renderizarSintaxis(resultado) {
         const slr = resultado.slr;
@@ -109,7 +114,7 @@
             }
             return `<span class="hoja-sintactica" data-simbolo="${e(n.simbolo)}"${n.lexema === undefined ? "" : ` data-lexema="${e(n.lexema)}"`}><strong>${e(n.simbolo)}</strong>: ${n.lexema === undefined ? "ε" : e(n.lexema)}</span>`;
         }
-        let html = `<section id="analisis-sintactico"><h3>C.2 Análisis sintáctico</h3><p>${slr.estados.length} estados LR(0); ${slr.conflictos.length} conflictos.</p>`;
+        let html = `<section id="analisis-sintactico"><h3>3. Análisis sintáctico y semántico</h3><p>${slr.estados.length} estados LR(0); ${slr.conflictos.length} conflictos.</p>`;
         for (const r of resultado.registros) {
             html += `<h4>Programa: ${r.sintaxis_aceptada ? "SLR(1) válido" : r.fase === "léxico" ? "no ejecutado por errores léxicos" : "estructura rechazada"}</h4>`;
             html += r.errores_sintacticos.map(error => `<p class="error">Línea ${error.linea}, columna ${error.columna}: ${e(error.detalle)}</p>`).join("");
@@ -136,34 +141,41 @@
             if (r.arbol) html += `<h3>Derivación por la izquierda del programa completo</h3><ol>${r.derivacion.map(p => `<li><code>${e(p.join(" "))}</code></li>`).join("")}</ol>`;
             if (r.traza.length) html += `<h3>Traza SLR(1) del programa completo</h3>` + tablaHTML(["Pila de estados", "Entrada", "Acción"], r.traza.map(p => [p.pila.join(" "), p.entrada.join(" "), p.accion]));
         }
-        return html + "</details></details></div></section>";
+        return html + "</details></details></div>";
     }
     function renderizar(resultado, automatas, config = {}) {
         const {tokens, errores} = resultado;
-        let html = renderizarSalida(resultado) + '<section id="proceso-interno"><h2>C. Proceso interno</h2><section id="analisis-lexico"><h3>C.1 Análisis léxico</h3>';
-        html+='<p>Las cinco familias son seleccionables para estudiar sus autómatas. Los literales también son tokens del analizador.</p>';
-        html+=tablaHTML(["Token","Descripción","Expresión regular","Ejemplos léxicos válidos / inválidos"],Object.entries(automatas).map(([n,d])=>[n,config.descripciones?.[n]??n,d.expresion,d.ejemplos[0].join(" / ")+(n === "IGUAL" ? "; No como IGUAL: " : "; No: ")+d.ejemplos[1].join(" / ")]));
-        html+=`<p class="nota">Literales: ${Object.entries(config.literales || {}).map(([l,n]) => `<code>${e(l)}</code> (${e(n)})`).join("; ")}.</p><h4>Lexemas de la entrada</h4>`;
+        let html = '<div id="proceso-interno"><section id="analisis-lexico"><h3>2. Análisis léxico</h3>';
+        html+='<p>Token: categoría simbólica. Lexema: texto reconocido; los nombres de categorías no forman parte del alfabeto de entrada.</p>';
+        const literales = Object.entries(config.literales || {});
+        const filasLiterales = literales.map(([l,n]) => `<tr><td>${e(n)}</td><td>${l === "Y" ? "Operador lógico" : l === ";" ? "Separador" : "Palabra reservada"}</td><td><code>${e(config.patrones_tokens?.[n] ?? l)}</code></td><td><code>${e(l)}</code></td></tr>`).join("");
+        html+=tablaHTML(["Token","Descripción","Expresión regular","Ejemplos léxicos válidos / inválidos"],Object.entries(automatas).map(([n,d])=>[n,config.descripciones?.[n]??n,d.expresion,d.ejemplos[0].join(" / ")+(n === "IGUAL" ? "; No como IGUAL: " : "; No: ")+d.ejemplos[1].join(" / ")]), "", filasLiterales);
+        html+='<h4>Lexemas de la entrada</h4>';
         if (tokens.length) {
-            const filas = tokens.map(t => [t.linea, t.columna, t.lexema, t.token, automatas[t.token]?.expresion ?? t.lexema]);
+            const filas = tokens.map(t => [t.linea, t.columna, t.lexema, t.token, config.patrones_tokens?.[t.token] ?? automatas[t.token]?.expresion ?? t.lexema]);
             const columnas = ["Línea", "Columna", "Lexema", "Token", "Expresión regular"];
             html += tablaHTML(columnas, filas.slice(0,6)) + `<details><summary>Ver todos los lexemas (${tokens.length})</summary>` + tablaHTML(columnas, filas) + "</details>";
         }
         if (errores.length) html += '<h3 class="error">Errores léxicos</h3>' + errores.map(t => `<p>Línea ${t.linea}, columna ${t.columna}: <strong>${e(t.lexema)}</strong> ${e(t.detalle)}</p>`).join("");
         else html += '<p class="correcto">Análisis léxico completado sin errores.</p>';
         if (!tokens.length) html += "<p>No se reconocieron tokens válidos.</p>";
-        html += '<div class="automatas-lexicos"><h4>Expresiones regulares y autómatas</h4><p>Selecciona una familia. Un AFND directo puede ser determinista: en ese caso AFND y AFD reconocen con la misma estructura. El mínimo se calcula por particiones.</p><div class="selector">';
+        html += '<div class="automatas-lexicos"><h4>Expresiones regulares y autómatas</h4><p>Selecciona un token. Cada símbolo de las flechas representa una transición individual.</p><div class="selector">';
         for (const nombre of Object.keys(automatas)) html += `<button type="button" class="boton-token" data-token="${nombre}" onclick="seleccionarToken('${nombre}')">${nombre}</button>`;
         html += "</div>";
         for (const [nombre, datos] of Object.entries(automatas)) {
-            html += `<div class="panel-token" id="token-${nombre}"><div class="panel"><h3>${nombre}</h3><p><strong>Expresión regular:</strong> <code>${e(datos.expresion)}</code></p><p>${Object.entries(tipos).map(([t, titulo]) => `<span class="etiqueta">${titulo}: ${datos[t].estados.length} estados${t === "afd_minimo" ? " (sin sumidero explícito)" : ""}</span>`).join(" ")}</p></div><p>Cumplen la expresión regular: ${e(datos.ejemplos[0].join(" / "))}. Inválidos: ${e(datos.ejemplos[1].join(" / "))}.</p><div class="comparacion-automatas">`;
+            html += `<div class="panel-token" id="token-${nombre}"><div class="panel"><h3>${nombre}</h3><p><strong>Expresión regular:</strong> <code>${e(datos.expresion)}</code></p><p>${Object.entries(tipos).map(([t, titulo]) => `<span class="etiqueta">${titulo}: ${datos[t].estados.length} estados</span>`).join(" ")}</p></div><p>Cumplen la expresión regular: ${e(datos.ejemplos[0].join(" / "))}. Inválidos: ${e(datos.ejemplos[1].join(" / "))}.</p><div class="comparacion-automatas">`;
             for (const tipo of Object.keys(tipos)) {
                 const panel = panelAutomata(nombre, tipo, datos);
-                html += tipo === "afd_minimo" ? `<details class="automata-minimo" ontoggle="if (this.open) reiniciarZoom('grafico-${nombre}-afd_minimo')"><summary>Consultar AFD mínimo parcial (sin sumidero explícito)</summary>${panel}</details>` : panel;
+                html += tipo === "afd_minimo" ? `<details class="automata-minimo" ontoggle="if (this.open) reiniciarZoom('grafico-${nombre}-afd_minimo')"><summary>AFD mínimo</summary>${panel}</details>` : panel;
             }
             html += "</div></div>";
         }
-        return html + "</div></section>" + renderizarSintaxis(resultado) + renderizarSemantica(resultado) + "</section>";
+        html += '<details id="exportar-jflap"><summary>Exportar a JFLAP</summary><div class="tabla-contenedor"><table><thead><tr><th>Token</th><th>AFND</th><th>AFD</th><th>AFD mínimo</th></tr></thead><tbody>';
+        for (const token of Object.keys(config.patrones_tokens || config.expresiones || automatas)) {
+            html += `<tr><td>${e(token)}</td>${Object.entries(tipos).map(([tipo, titulo]) => `<td><a href="/jflap/${e(token)}-${tipo}.jff" download>Descargar .jff</a></td>`).join("")}</tr>`;
+        }
+        html += '</tbody></table></div></details>';
+        return html + "</div></section>" + renderizarSintaxis(resultado) + renderizarSemantica(resultado) + "</div>" + renderizarSalida(resultado);
     }
     const vistas = {dibujar, renderizar};
     if (typeof module !== "undefined" && module.exports) module.exports = vistas;

@@ -8,7 +8,7 @@ const operadores={">":"GT","<":"LT",">=":"GE","<=":"LE","==":"EQ","!=":"NE"};
 function contieneDatos(texto){return [...texto].some(c=>!espacios.test(c));}
 function analizar(texto,config) {
     const tokens=[],errores=[];
-    const reglas=(config.orden_tokens||Object.keys(config.expresiones)).map(n=>[n,new RegExp("^(?:"+config.expresiones[n]+")$")]);
+    const reglas=Object.entries(config.patrones_tokens || config.expresiones).map(([n,p])=>[n,new RegExp("^(?:"+p+")$")]);
     lineas(texto).forEach((linea,i)=>{
         const caracteres=[...linea];
         for(let pos=0;pos<caracteres.length;) {
@@ -18,7 +18,7 @@ function analizar(texto,config) {
             else if("=<>!".includes(caracteres[pos])) pos += ["<=",">=","==","!="].includes(caracteres.slice(pos,pos+2).join("")) ? 2 : 1;
             else while(pos<caracteres.length&&!espacios.test(caracteres[pos])&&!";=<>!".includes(caracteres[pos]))pos++;
             const lexema=caracteres.slice(inicio,pos).join("");
-            const token=Object.hasOwn(config.literales,lexema)?config.literales[lexema]:reglas.find(([,p])=>p.test(lexema))?.[0];
+            const token=config.patrones_tokens ? reglas.find(([,p])=>p.test(lexema))?.[0] : (Object.hasOwn(config.literales,lexema)?config.literales[lexema]:reglas.find(([,p])=>p.test(lexema))?.[0]);
             const e={linea:i+1,columna:inicio+1,lexema};
             if(token)tokens.push({...e,token});else errores.push({...e,detalle:"Lexema no reconocido; respeta códigos completos, operadores y mayúsculas."});
         }
